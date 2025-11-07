@@ -1,0 +1,18 @@
+@import "tailwindcss";
+
+@theme {
+    --color-primary: #005828;
+    --color-secondary: #ff7800;
+    --color-blackPrimary: rgba(26, 26, 26, 0.95);
+    --color-accent: #00a852;
+    --color-heading: #2c2c2c;
+    --color-textColor: #4a4a4a;
+    --color-gradientPrimary: linear-gradient(135deg, #005828 0%, #00a852 100%);
+    --color-gradientSecondary: linear-gradient(135deg, #ff7800 0%, #ff9500 100%);
+    --color-bgGlass: rgba(255, 255, 255, 0.1);
+    --color-bgGlassBorder: rgba(255, 255, 255, 0.2);
+
+    --font-sans: 'Poppins', sans-serif;
+}
+
+

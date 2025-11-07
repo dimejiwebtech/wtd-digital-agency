@@ -1,0 +1,23 @@
+{% for post in page_obj %}
+<a href="{% url 'posts_by_category_page_or_post' slug=post.slug %}" class="flex gap-2 p-2 hover:bg-gray-100 rounded transition group">
+  <div class="w-12 h-12 flex-shrink-0 rounded overflow-hidden">
+    {% if post.featured_image %}
+    <img src="{{ post.featured_image.url }}" alt="{{ post.title }}" class="w-full h-full object-cover">
+    {% else %}
+    <div class="w-full h-full bg-gradient-to-br from-gray-200 to-gray-300"></div>
+    {% endif %}
+  </div>
+  <div class="flex-1 min-w-0">
+    <h4 class="text-sm font-semibold text-gray-900 line-clamp-2 group-hover:text-primary transition-colors">
+      {{ post.title }}
+    </h4>
+    <div class="flex items-center gap-1.5 text-xs text-gray-500 mt-0.5">
+      <time>{{ post.published_date|date:"M j" }}</time>
+      <span>•</span>
+      <span>{{ post.read_time }}m</span>
+    </div>
+  </div>
+</a>
+{% empty %}
+<div class="p-3 text-center text-sm text-gray-500">No results found</div>
+{% endfor %}

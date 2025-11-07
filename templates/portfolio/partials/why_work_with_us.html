@@ -1,0 +1,173 @@
+{% load static %}
+<section class="bg-gradient-to-b from-gray-50 to-white py-20">
+  <div class="container mx-auto px-6 md:px-8">
+    <!-- Section Header -->
+    <div class="text-center mb-16">
+      <h2 class="text-3xl md:text-4xl font-bold text-primary mb-4">Why Choose Us</h2>
+      <p class="text-gray-600 max-w-2xl mx-auto">Discover what sets us apart and makes us the perfect partner for your digital journey</p>
+    </div>
+
+    <!-- Tabs Container-->
+    <div class="flex flex-row justify-center max-w-2xl mx-auto mb-16 p-2 bg-white rounded-full border border-gray-200">
+      <!-- Tab 1 -->
+      <button
+        class="tab-btn flex-1 px-6 py-3 text-sm sm:text-base font-semibold rounded-full transition-all duration-300 text-gray-600 hover:text-gray-900"
+        data-target="panel-1"
+      >
+        Creativity
+      </button>
+
+      <!-- Tab 2 -->
+      <button
+        class="tab-btn flex-1 px-6 py-3 text-sm sm:text-base font-semibold rounded-full transition-all duration-300 text-gray-600 hover:text-gray-900"
+        data-target="panel-2"
+      >
+        Expertise
+      </button>
+
+      <!-- Tab 3 -->
+      <button
+        class="tab-btn flex-1 px-6 py-3 text-sm sm:text-base font-semibold rounded-full transition-all duration-300 text-gray-600 hover:text-gray-900"
+        data-target="panel-3"
+      >
+        Strategy
+      </button>
+    </div>
+
+    <!-- Panels Container -->
+    <div id="panels" class="max-w-6xl mx-auto">
+      <!-- Panel 1 - Creativity -->
+      <div class="panel panel-1 hidden">
+        <div class="flex flex-col md:flex-row items-center gap-12 md:gap-16">
+          <div class="md:w-1/2">
+            <img
+              src="{% static 'images/Illustration-features-tab-1.svg' %}"
+              alt="Creativity"
+              class="w-full rounded-2xl"
+            />
+          </div>
+          <div class="md:w-1/2 space-y-6">
+            <h3 class="text-3xl md:text-4xl font-bold text-primary">Creative Solutions</h3>
+            <p class="text-black text-lg leading-relaxed">
+              We blend artistic vision with strategic thinking to create digital
+              experiences that captivate and convert. Our creative process ensures
+              your brand stands out in today's competitive landscape.
+            </p>
+            <ul class="space-y-4 text-black">
+              <li class="flex items-center gap-3">
+                <span class="w-2 h-2 bg-primary rounded-full"></span>
+                <span class="font-medium">Unique and memorable designs</span>
+              </li>
+              <li class="flex items-center gap-3">
+                <span class="w-2 h-2 bg-primary rounded-full"></span>
+                <span class="font-medium">User-centered approach</span>
+              </li>
+              <li class="flex items-center gap-3">
+                <span class="w-2 h-2 bg-primary rounded-full"></span>
+                <span class="font-medium">Brand identity that resonates</span>
+              </li>
+            </ul>
+            <div class="text-center md:text-left">
+            <button
+              class="px-8 py-3 bg-transparent border-2 border-primary text-primary font-semibold rounded-full hover:bg-primary hover:text-white transition-all duration-300"
+            >
+              Learn More
+            </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Panel 2 - Technical Expertise -->
+      <div class="panel panel-2 hidden">
+        <div class="flex flex-col md:flex-row items-center gap-12 md:gap-16">
+          <div class="md:w-1/2">
+            <img
+              src="{% static 'images/Illustration-features-tab-2.svg' %}"
+              alt="Technical Expertise"
+              class="w-full rounded-2xl"
+            />
+          </div>
+          <div class="md:w-1/2 space-y-6">
+            <h3 class="text-3xl md:text-4xl font-bold text-primary">
+              Technical Expertise
+            </h3>
+            <p class="text-black text-lg leading-relaxed">
+              Our technical team excels in transforming ideas into robust digital
+              solutions. With expertise in the latest technologies and a focus on
+              performance, we ensure your project is in capable hands.
+            </p>
+            <ul class="space-y-4 text-black">
+              <li class="flex items-center gap-3">
+                <span class="w-2 h-2 bg-primary rounded-full"></span>
+                <span class="font-medium">Cutting-edge technology use</span>
+              </li>
+              <li class="flex items-center gap-3">
+                <span class="w-2 h-2 bg-primary rounded-full"></span>
+                <span class="font-medium">Robust and scalable solutions</span>
+              </li>
+              <li class="flex items-center gap-3">
+                <span class="w-2 h-2 bg-primary rounded-full"></span>
+                <span class="font-medium">Performance optimization</span>
+              </li>
+            </ul>
+            <div class="text-center md:text-left">
+                <button
+                class="px-8 py-3 bg-transparent border-2 border-primary text-primary font-semibold rounded-full hover:bg-primary hover:text-white transition-all duration-300"
+                >
+                Learn More
+            </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Panel 3 - Strategic Thinking -->
+      <div class="panel panel-3 hidden">
+        <div class="flex flex-col md:flex-row items-center gap-12 md:gap-16">
+          <div class="md:w-1/2">
+            <img
+              src="{% static 'images/Illustration-features-tab-3.svg' %}"
+              alt="Strategic Thinking"
+              class="w-full rounded-2xl"
+            />
+          </div>
+          <div class="md:w-1/2 space-y-6">
+            <h3 class="text-3xl md:text-4xl font-bold text-primary">
+              Strategic Thinking
+            </h3>
+            <p class="text-black text-lg leading-relaxed">
+              Our strategic team focuses on delivering solutions that not only
+              meet your immediate needs but also drive long-term success. We
+              analyze, plan, and execute with precision to ensure your project's
+              impact is both meaningful and measurable.
+            </p>
+            <ul class="space-y-4 text-black">
+              <li class="flex items-center gap-3">
+                <span class="w-2 h-2 bg-primary rounded-full"></span>
+                <span class="font-medium">Data-driven decision making</span>
+              </li>
+              <li class="flex items-center gap-3">
+                <span class="w-2 h-2 bg-primary rounded-full"></span>
+                <span class="font-medium">Comprehensive market analysis</span>
+              </li>
+              <li class="flex items-center gap-3">
+                <span class="w-2 h-2 bg-primary rounded-full"></span>
+                <span class="font-medium">Long-term vision and planning</span>
+              </li>
+            </ul>
+            <div class="text-center md:text-left">
+                <button
+                class="px-8 py-3 bg-transparent border-2 border-primary text-primary font-semibold rounded-full hover:bg-primary hover:text-white transition-all duration-300"
+                >
+                Learn More
+            </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script src="{% static 'js/portfolio/tabs.js' %}"></script>

@@ -1,0 +1,80 @@
+{% extends 'common_base.html' %}
+
+{% load static %}
+
+{% block navbar %}
+
+
+
+<nav class="sticky top-0 z-50 shadow-lg bg-black">
+      <section class="container mx-auto px-4 md:px-8">
+        <div class="flex justify-between items-center h-20">
+          <div>
+            <a href="{% url 'homepage' %}"><img src="{% static 'images/logo.png' %}" alt="WTD Digital" class="h-12" /></a>
+          </div>
+
+          <!-- Desktop Menu -->
+          <div class="hidden items-center md:flex space-x-10">
+            {% for category in categories %}
+            <a href="{% url 'posts_by_category_page_or_post' slug=category.slug %}" class="group relative text-white font-semibold py-2 transition-all hover:scale-105">
+              <span class="group-hover:text-primary transition-colors">{{category.name}}</span>
+              <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full"></span>
+            </a>
+            {% endfor %}
+            </div>
+
+
+          <a
+            href="{% url 'homepage' %}"
+            class="hidden md:block px-8 py-2.5 bg-transparent border-2 border-primary rounded-full font-bold text-white hover:bg-primary hover:text-white transition-all"
+            >Home</a
+          >
+
+          <!-- Mobile Menu Button -->
+          <button id="mobile-menu-btn" class="md:hidden z-50 text-white">
+            <svg
+              class="w-7 h-7"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                id="menu-open"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2.5"
+                d="M4 6h16M4 12h16M4 18h16"
+              />
+              <path
+                id="menu-close"
+                class="hidden"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2.5"
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </button>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden pb-6">
+          <div class="flex flex-col space-y-4">
+            {% for category in categories %}
+            <a href="#" class="text-white font-semibold hover:text-primary transition py-2">{{category.name}}</a>
+            {% endfor %}
+            </div>
+            
+           <div class="text-center">
+             <a href="{% url 'homepage' %}" class="w-50 px-8 py-2.5 bg-transparent border-2 border-primary rounded-full font-bold text-white hover:bg-primary hover:text-white transition-all text-center mt-4">Home</a>
+           </div>
+          
+        </div>
+      </section>
+    </nav>
+
+    
+
+{% endblock %}
+
+

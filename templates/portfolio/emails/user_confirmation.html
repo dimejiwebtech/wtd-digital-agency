@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+      }
+      .container {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+      .header {
+        font-size: 24px;
+        color: #333;
+        margin-bottom: 20px;
+      }
+      .content {
+        background: #f9f9f9;
+        padding: 20px;
+        border-radius: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">Thank You for Contacting Us!</div>
+      <div class="content">
+        <p>Dear {{ name }},</p>
+        <p>
+          Thank you for reaching out to us. We have received your message and
+          will get back to you within 24-48 hours.
+        </p>
+        <p>Best regards,<br />Your Company Name</p>
+      </div>
+    </div>
+  </body>
+</html>

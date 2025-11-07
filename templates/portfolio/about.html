@@ -1,0 +1,303 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="relative min-h-[70vh] flex items-center py-20 bg-gradient-to-b from-black/95 to-black/80">
+  <div class="absolute inset-0 -z-10">
+    <img src="{% static 'images/about_team.webp' %}" alt="About Us" class="w-full h-full object-cover"/>
+  </div>
+  <div class="container mx-auto px-4 md:px-8">
+    <div class="max-w-4xl mx-auto text-center">
+      <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-8 animate-fadeIn">
+        Transforming Ideas Into Digital Reality
+      </h1>
+      <p class="text-gray-300 text-lg md:text-xl leading-relaxed max-w-2xl mx-auto mb-12 animate-fadeIn animation-delay-200">
+        We're more than just a digital agency - we're your partners in digital transformation.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- Company Overview + Stats Section -->
+<section class="py-20 bg-white">
+  <div class="container mx-auto px-4 md:px-8">
+    <div class="flex flex-col lg:flex-row gap-16 items-center">
+      <!-- Left: Text + Stats -->
+      <div class="flex-1">
+        <h2 class="text-4xl md:text-5xl font-bold mb-6 text-gray-900">Who We Are</h2>
+        <p class="text-gray-600 text-lg leading-relaxed mb-6">
+          Founded with a vision to bridge the gap between innovative technology and business success, we have evolved into a trusted partner for companies seeking digital transformation.
+        </p>
+        <p class="text-gray-600 text-lg leading-relaxed mb-10">
+          Our multidisciplinary team brings together expertise in web development, digital marketing, content strategy, and user experience design to deliver exceptional results that drive growth.
+        </p>
+        
+        <!-- Stats Grid -->
+        <div class="grid grid-cols-2 gap-4 mb-8">
+          <div class="bg-gray-50 p-6 rounded-xl border border-gray-200 hover:border-primary transition-all">
+            <span class="block text-4xl font-bold text-primary mb-2" data-target="150">0</span>
+            <span class="text-gray-600 text-sm font-medium">Projects Completed</span>
+          </div>
+          <div class="bg-gray-50 p-6 rounded-xl border border-gray-200 hover:border-primary transition-all">
+            <span class="block text-4xl font-bold text-primary mb-2" data-target="8">0</span>
+            <span class="text-gray-600 text-sm font-medium">Years Experience</span>
+          </div>
+          <div class="bg-gray-50 p-6 rounded-xl border border-gray-200 hover:border-primary transition-all">
+            <span class="block text-4xl font-bold text-primary mb-2" data-target="50">0</span>
+            <span class="text-gray-600 text-sm font-medium">Happy Clients</span>
+          </div>
+          <div class="bg-gray-50 p-6 rounded-xl border border-gray-200 hover:border-primary transition-all">
+            <span class="block text-4xl font-bold text-primary mb-2">24/7</span>
+            <span class="text-gray-600 text-sm font-medium">Support Available</span>
+          </div>
+        </div>
+        
+        <a href="{% url 'contact' %}" class="inline-flex items-center gap-2 px-10 py-4 bg-primary text-white font-bold rounded-full hover:bg-primary/90 transition-all shadow-lg">
+          Start Your Project
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+          </svg>
+        </a>
+      </div>
+
+      <!-- Right: Company Logo/Image -->
+      <div class="flex-1 flex items-center justify-center">
+        <img src="{% static 'images/abt_tran.png' %}" alt="WTD Digital" class="w-full max-w-md"/>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Mission & Vision with Images -->
+<section class="py-20 bg-gray-50">
+  <div class="container mx-auto px-4 md:px-8">
+    <!-- Mission -->
+    <div class="grid lg:grid-cols-2 gap-16 items-center mb-24">
+      <div class="order-2 lg:order-1">
+        <div class="relative rounded-3xl overflow-hidden shadow-2xl h-[500px]">
+          <img src="{% static 'images/mission.jpg' %}" alt="Our Mission" class="w-full h-full object-cover"/>
+        </div>
+      </div>
+      <div class="order-1 lg:order-2">
+        <span class="inline-block px-6 py-2 bg-primary/10 text-primary font-bold rounded-full mb-6">Our Mission</span>
+        <h3 class="text-4xl md:text-5xl font-bold mb-6 text-gray-900">Empowering Digital Success</h3>
+        <p class="text-gray-600 text-xl leading-relaxed mb-6">
+          To empower businesses with innovative digital solutions that drive growth, enhance user experiences, and create lasting impact in the digital landscape.
+        </p>
+        <p class="text-gray-600 text-lg leading-relaxed">
+          We believe in transforming challenges into opportunities through strategic thinking, creative excellence, and cutting-edge technology.
+        </p>
+      </div>
+    </div>
+
+    <!-- Vision -->
+    <div class="grid lg:grid-cols-2 gap-16 items-center">
+      <div>
+        <span class="inline-block px-6 py-2 bg-primary/10 text-primary font-bold rounded-full mb-6">Our Vision</span>
+        <h3 class="text-4xl md:text-5xl font-bold mb-6 text-gray-900">Leading the Digital Future</h3>
+        <p class="text-gray-600 text-xl leading-relaxed mb-6">
+          To be the leading digital agency recognized for delivering transformative solutions that set industry standards and exceed client expectations.
+        </p>
+        <p class="text-gray-600 text-lg leading-relaxed">
+          We envision a world where every business, regardless of size, has access to world-class digital solutions that propel them forward.
+        </p>
+      </div>
+      <div>
+        <div class="relative rounded-3xl overflow-hidden shadow-2xl h-[500px]">
+          <img src="{% static 'images/vision.jpg' %}" alt="Our Vision" class="w-full h-full object-cover"/>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Core Values with Images -->
+<section class="py-20 bg-white">
+  <div class="container mx-auto px-4 md:px-8">
+    <div class="text-center mb-20">
+      <h2 class="text-5xl md:text-6xl font-bold mb-6">Our Core Values</h2>
+      <p class="text-gray-600 text-xl max-w-3xl mx-auto">
+        The principles that guide everything we do and shape our approach to digital excellence
+      </p>
+    </div>
+    
+    <div class="space-y-16">
+      <!-- Value 1: Innovation -->
+      <div class="grid lg:grid-cols-2 gap-12 items-center">
+        <div class="relative rounded-3xl overflow-hidden shadow-2xl h-[400px]">
+          <img src="{% static 'images/innovation.jpg' %}" alt="Innovation" class="w-full h-full object-cover"/>
+        </div>
+        <div>
+          <span class="inline-block px-6 py-2 bg-primary/10 text-primary font-bold rounded-full mb-4">Innovation</span>
+          <h4 class="text-3xl font-bold mb-6 text-gray-900">Pushing Boundaries</h4>
+          <p class="text-gray-600 text-lg leading-relaxed mb-4">
+            We constantly explore new technologies, methodologies, and creative approaches to deliver solutions that keep you ahead of the competition.
+          </p>
+          <p class="text-gray-600 text-lg leading-relaxed">
+            Innovation isn't just about technology—it's about reimagining what's possible and turning bold ideas into reality.
+          </p>
+        </div>
+      </div>
+
+      <!-- Value 2: Integrity -->
+      <div class="grid lg:grid-cols-2 gap-12 items-center">
+        <div class="order-2 lg:order-1">
+          <span class="inline-block px-6 py-2 bg-primary/10 text-primary font-bold rounded-full mb-4">Integrity</span>
+          <h4 class="text-3xl font-bold mb-6 text-gray-900">Built on Trust</h4>
+          <p class="text-gray-600 text-lg leading-relaxed mb-4">
+            We uphold the highest standards of honesty, transparency, and ethical practices in every interaction with our clients and partners.
+          </p>
+          <p class="text-gray-600 text-lg leading-relaxed">
+            Your success is our success, and we're committed to building long-term relationships based on mutual respect and trust.
+          </p>
+        </div>
+        <div class="order-1 lg:order-2 relative rounded-3xl overflow-hidden shadow-2xl h-[400px]">
+          <img src="{% static 'images/integrity.jpg' %}" alt="Integrity" class="w-full h-full object-cover"/>
+        </div>
+      </div>
+
+      <!-- Value 3: Excellence -->
+      <div class="grid lg:grid-cols-2 gap-12 items-center">
+        <div class="relative rounded-3xl overflow-hidden shadow-2xl h-[400px]">
+          <img src="{% static 'images/excellence.jpg' %}" alt="Excellence" class="w-full h-full object-cover"/>
+        </div>
+        <div>
+          <span class="inline-block px-6 py-2 bg-primary/10 text-primary font-bold rounded-full mb-4">Excellence</span>
+          <h4 class="text-3xl font-bold mb-6 text-gray-900">Quality Without Compromise</h4>
+          <p class="text-gray-600 text-lg leading-relaxed mb-4">
+            We deliver superior quality in every project through meticulous attention to detail, rigorous testing, and unwavering dedication to perfection.
+          </p>
+          <p class="text-gray-600 text-lg leading-relaxed">
+            Excellence is not an act, but a habit—and it's woven into every line of code, every design element, and every client interaction.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Our Process Section -->
+<section class="py-20 bg-gray-50">
+  <div class="container mx-auto px-4 md:px-8">
+    <div class="text-center mb-20">
+      <h2 class="text-5xl md:text-6xl font-bold mb-6">Our Process</h2>
+      <p class="text-gray-600 text-xl max-w-3xl mx-auto">
+        A proven methodology refined over years of delivering exceptional digital solutions
+      </p>
+    </div>
+    
+    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+      <div class="bg-white p-10 rounded-3xl border-2 border-gray-100 hover:border-primary hover:shadow-xl transition-all">
+        <div class="w-24 h-24 bg-gradient-to-br from-primary to-primary/70 rounded-2xl flex items-center justify-center mx-auto mb-8 shadow-lg">
+          <span class="text-4xl font-bold text-white">01</span>
+        </div>
+        <h3 class="text-2xl font-bold mb-4 text-center">Discovery</h3>
+        <p class="text-gray-600 text-center leading-relaxed">Deep dive into your business goals, challenges, and opportunities</p>
+      </div>
+      
+      <div class="bg-white p-10 rounded-3xl border-2 border-gray-100 hover:border-primary hover:shadow-xl transition-all">
+        <div class="w-24 h-24 bg-gradient-to-br from-primary to-primary/70 rounded-2xl flex items-center justify-center mx-auto mb-8 shadow-lg">
+          <span class="text-4xl font-bold text-white">02</span>
+        </div>
+        <h3 class="text-2xl font-bold mb-4 text-center">Strategy</h3>
+        <p class="text-gray-600 text-center leading-relaxed">Crafting a comprehensive roadmap aligned with your objectives</p>
+      </div>
+      
+      <div class="bg-white p-10 rounded-3xl border-2 border-gray-100 hover:border-primary hover:shadow-xl transition-all">
+        <div class="w-24 h-24 bg-gradient-to-br from-primary to-primary/70 rounded-2xl flex items-center justify-center mx-auto mb-8 shadow-lg">
+          <span class="text-4xl font-bold text-white">03</span>
+        </div>
+        <h3 class="text-2xl font-bold mb-4 text-center">Execution</h3>
+        <p class="text-gray-600 text-center leading-relaxed">Bringing your vision to life with precision and creativity</p>
+      </div>
+      
+      <div class="bg-white p-10 rounded-3xl border-2 border-gray-100 hover:border-primary hover:shadow-xl transition-all">
+        <div class="w-24 h-24 bg-gradient-to-br from-primary to-primary/70 rounded-2xl flex items-center justify-center mx-auto mb-8 shadow-lg">
+          <span class="text-4xl font-bold text-white">04</span>
+        </div>
+        <h3 class="text-2xl font-bold mb-4 text-center">Growth</h3>
+        <p class="text-gray-600 text-center leading-relaxed">Continuous optimization and support for sustained success</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Team Section -->
+<section class="py-20 bg-white">
+  <div class="max-w-7xl mx-auto px-4 md:px-8">
+    <div class="text-center mb-20">
+      <h2 class="text-5xl md:text-6xl font-bold mb-6">Meet Our Team</h2>
+      <p class="text-gray-600 text-xl max-w-3xl mx-auto">
+        The talented individuals behind every successful project
+      </p>
+    </div>
+
+    <div class="relative overflow-hidden">
+      <div id="team-slider" class="flex gap-8 justify-center overflow-x-auto pb-8 scrollbar-hide">
+        {% for member in team_members %}
+        <div class="flex-shrink-0 w-[280px]">
+          <div class="group">
+            <div class="relative overflow-hidden rounded-2xl mb-6 shadow-xl">
+              <img
+                src="{{ member.image.url }}"
+                alt="{{ member.name }}"
+                class="w-full h-[320px] object-cover transform group-hover:scale-105 transition-transform duration-700"
+              />
+            </div>
+            <div class="text-center">
+              <h3 class="text-xl font-bold text-gray-900 mb-2">{{ member.name }}</h3>
+              <p class="text-gray-600 font-medium">{{ member.position }}</p>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const counters = document.querySelectorAll('[data-target]');
+    
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const target = parseInt(entry.target.getAttribute('data-target'));
+          animateCounter(entry.target, target);
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.5 });
+    
+    counters.forEach(counter => observer.observe(counter));
+    
+    function animateCounter(element, target) {
+      let current = 0;
+      const increment = target / 50;
+      const timer = setInterval(() => {
+        current += increment;
+        if (current >= target) {
+          element.textContent = target;
+          clearInterval(timer);
+        } else {
+          element.textContent = Math.floor(current);
+        }
+      }, 30);
+    }
+  });
+</script>
+
+{% endblock %}

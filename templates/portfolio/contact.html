@@ -1,0 +1,213 @@
+{% extends 'base.html' %} 
+
+{% load static %} 
+
+{% block content %}
+
+<section class="relative min-h-[70vh] flex items-center py-20 bg-gradient-to-b from-black/95 to-black/80">
+  <div class="absolute inset-0 -z-10">
+    <img src="{% static 'images/about_team.webp' %}" alt="About Us" class="w-full h-full object-cover"/>
+  </div>
+  <div class="container mx-auto px-4 md:px-8">
+    <div class="max-w-4xl mx-auto text-center">
+      <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6">
+        Let's Build Something Amazing Together
+      </h1>
+      <p
+        class="text-gray-300 text-lg md:text-xl leading-relaxed max-w-3xl mx-auto"
+      >
+        Whether you need a new website, mobile app, or digital marketing
+        strategy, our team is here to help bring your vision to life.
+      </p>
+    </div> 
+  </div>
+</section>
+
+<section class="py-20 bg-white">
+  <div class="container mx-auto px-4 md:px-8">
+    <div class="grid lg:grid-cols-12 gap-12 max-w-7xl mx-auto">
+      <div class="lg:col-span-4 space-y-10">
+        <div>
+          <h2 class="text-3xl font-bold mb-8">Get in Touch</h2>
+          <p class="text-gray-600 mb-8 leading-relaxed">
+            Ready to start your project? Fill out the form and our team will get
+            back to you within 24 hours.
+          </p>
+        </div>
+
+        <div class="space-y-6">
+          <div class="flex items-start gap-4">
+            <div
+              class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0"
+            >
+              <i class="fas fa-map-marker-alt text-primary text-xl"></i>
+            </div>
+            <div>
+              <h3 class="font-semibold text-gray-900 mb-1">Our Office</h3>
+              <p class="text-gray-600">123 Business Street</p>
+              <p class="text-gray-600">New York, NY 10001</p>
+            </div>
+          </div>
+
+          <div class="flex items-start gap-4">
+            <div
+              class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0"
+            >
+              <i class="fas fa-phone text-primary text-xl"></i>
+            </div>
+            <div>
+              <h3 class="font-semibold text-gray-900 mb-1">Call Us</h3>
+              <p class="text-gray-600">+1 (555) 123-4567</p>
+              <p class="text-gray-600">Mon - Fri, 9am - 6pm</p>
+            </div>
+          </div>
+
+          <div class="flex items-start gap-4">
+            <div
+              class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0"
+            >
+              <i class="fas fa-envelope text-primary text-xl"></i>
+            </div>
+            <div>
+              <h3 class="font-semibold text-gray-900 mb-1">Email Us</h3>
+              <p class="text-gray-600">info@yourcompany.com</p>
+              <p class="text-gray-600">support@yourcompany.com</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Social Links -->
+        <div class="pt-6 border-t">
+          <h3 class="font-semibold text-gray-900 mb-4">Follow Us</h3>
+          <div class="flex gap-4">
+            <a
+              href="#"
+              class="w-10 h-10 rounded-full bg-gray-100 hover:bg-primary/10 flex items-center justify-center text-gray-600 hover:text-primary transition-colors"
+            >
+              <i class="fab fa-twitter"></i>
+            </a>
+            <a
+              href="#"
+              class="w-10 h-10 rounded-full bg-gray-100 hover:bg-primary/10 flex items-center justify-center text-gray-600 hover:text-primary transition-colors"
+            >
+              <i class="fab fa-linkedin-in"></i>
+            </a>
+            <a
+              href="#"
+              class="w-10 h-10 rounded-full bg-gray-100 hover:bg-primary/10 flex items-center justify-center text-gray-600 hover:text-primary transition-colors"
+            >
+              <i class="fab fa-instagram"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column - Contact Form -->
+      <div class="lg:col-span-8">
+        <div class="bg-gray-50 rounded-2xl p-8 md:p-12">
+          <form method="POST" class="space-y-8">
+            {% csrf_token %}
+            <div class="grid md:grid-cols-2 gap-6">
+              <div class="space-y-2">
+                <label class="block text-sm font-medium text-gray-900"
+                  >Full Name *</label
+                >
+                <input
+                  type="text"
+                  name="name"
+                  required
+                  class="w-full px-4 py-3 rounded-lg bg-white border border-gray-300 focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
+                  placeholder="John Doe"
+                />
+              </div>
+              <div class="space-y-2">
+                <label class="block text-sm font-medium text-gray-900"
+                  >Email Address *</label
+                >
+                <input
+                  type="email"
+                  name="email"
+                  required
+                  class="w-full px-4 py-3 rounded-lg bg-white border border-gray-300 focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
+                  placeholder="john@example.com"
+                />
+              </div>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6">
+              <div class="space-y-2">
+                <label class="block text-sm font-medium text-gray-900"
+                  >Phone Number</label
+                >
+                <input
+                  type="tel"
+                  name="phone"
+                  class="w-full px-4 py-3 rounded-lg bg-white border border-gray-300 focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
+                  placeholder="+1 (555) 000-0000"
+                />
+              </div>
+              <div class="space-y-2">
+                <label class="block text-sm font-medium text-gray-900"
+                  >Project Type *</label
+                >
+                <select
+                  name="project_type"
+                  required
+                  class="w-full px-4 py-3 rounded-lg bg-white border border-gray-300 focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
+                >
+                  <option value="">Select Project Type</option>
+                  <option value="website">Website Development</option>
+                  <option value="ecommerce">E-Commerce</option>
+                  <option value="mobile">Mobile App</option>
+                  <option value="design">UI/UX Design</option>
+                  <option value="marketing">Digital Marketing</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="space-y-2">
+              <label class="block text-sm font-medium text-gray-900"
+                >Project Budget *</label
+              >
+              <select
+                name="budget"
+                required
+                class="w-full px-4 py-3 rounded-lg bg-white border border-gray-300 focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
+              >
+                <option value="">Select Budget Range</option>
+                <option value="small">$5,000 - $10,000</option>
+                <option value="medium">$10,000 - $25,000</option>
+                <option value="large">$25,000 - $50,000</option>
+                <option value="enterprise">$50,000+</option>
+              </select>
+            </div>
+
+            <div class="space-y-2">
+              <label class="block text-sm font-medium text-gray-900"
+                >Project Details *</label
+              >
+              <textarea
+                name="message"
+                rows="6"
+                required
+                class="w-full px-4 py-3 rounded-lg bg-white border border-gray-300 focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
+                placeholder="Tell us about your project requirements..."
+              ></textarea>
+            </div>
+
+            <div>
+              <button
+                type="submit"
+                class="w-full md:w-auto px-8 py-4 bg-primary text-white font-semibold rounded-lg hover:bg-primary/90 transition-colors"
+              >
+                Send Message
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

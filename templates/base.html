@@ -1,0 +1,128 @@
+{% extends 'common_base.html' %}
+
+{% load static %}
+
+{% block navbar %}
+
+<nav class="sticky top-0 z-50 shadow-lg bg-black">
+      <section class="container mx-auto px-4 md:px-8">
+        <div class="flex justify-between items-center h-20">
+          <div>
+            <a href="{% url 'homepage' %}"><img src="{% static 'images/logo.png' %}" alt="WTD Digital" class="h-12" /></a>
+          </div>
+
+          <!-- Desktop Menu -->
+          <div class="hidden items-center md:flex space-x-10">
+            <a href="{% url 'homepage' %}" class="group relative text-white font-semibold py-2 transition-all hover:scale-105">
+              <span class="group-hover:text-primary transition-colors">Home</span>
+              <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full"></span>
+            </a>
+            
+            <a href="{% url 'about' %}" class="group relative text-white font-semibold py-2 transition-all hover:scale-105">
+              <span class="group-hover:text-primary transition-colors">About</span>
+              <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full"></span>
+            </a>
+
+            <a href="{% url 'blog' %}" class="group relative text-white font-semibold py-2 transition-all hover:scale-105">
+              <span class="group-hover:text-primary transition-colors">Blog</span>
+              <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full"></span>
+            </a>
+
+            <!-- Services Dropdown -->
+            <div class="relative group">
+              <button class="flex items-center gap-1 text-white font-semibold py-2 transition-all hover:scale-105 group-hover:text-primary">
+                <a href="{% url 'services' %}">Services</a>
+                <svg class="w-4 h-4 transition-transform group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                </svg>
+                <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full"></span>
+              </button>
+              <div class="absolute top-full left-0 mt-2 w-64 bg-gray-900 shadow-xl rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all border border-gray-800">
+                <a href="{% url 'service_detail' service_slug='web-development' %}" class="block px-5 py-3 text-white hover:bg-gray-800 hover:text-primary rounded-t-lg font-medium transition">Web Development</a>
+                <a href="{% url 'service_detail' service_slug='web-design' %}" class="block px-5 py-3 text-white hover:bg-gray-800 hover:text-primary font-medium transition">Web Design</a>
+                <a href="{% url 'service_detail' service_slug='app-development' %}" class="block px-5 py-3 text-white hover:bg-gray-800 hover:text-primary font-medium transition">Mobile App Development</a>
+                <a href="{% url 'service_detail' service_slug='content-writing' %}" class="block px-5 py-3 text-white hover:bg-gray-800 hover:text-primary font-medium transition">Content Writing</a>
+                <a href="{% url 'service_detail' service_slug='seo' %}" class="block px-5 py-3 text-white hover:bg-gray-800 hover:text-primary font-medium transition">SEO</a>
+                <a href="{% url 'service_detail' service_slug='business-registration' %}" class="block px-5 py-3 text-white hover:bg-gray-800 hover:text-primary font-medium transition">Business Registration</a>
+                <a href="{% url 'service_detail' service_slug='ui-ux-design' %}" class="block px-5 py-3 text-white hover:bg-gray-800 hover:text-primary font-medium transition">UI/UX Design</a>
+                <a href="{% url 'service_detail' service_slug='blockchain-development' %}" class="block px-5 py-3 text-white hover:bg-gray-800 hover:text-primary rounded-b-lg font-medium transition">Blockchain Development</a>
+              </div>
+            </div>
+
+            <a href="{% url 'projects' %}" class="group relative text-white font-semibold py-2 transition-all hover:scale-105">
+              <span class="group-hover:text-primary transition-colors">Case Studies</span>
+              <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full"></span>
+            </a>
+          </div>
+
+          <a
+            href="{% url 'contact' %}"
+            class="hidden md:block px-8 py-2.5 bg-transparent border-2 border-primary rounded-full font-bold text-white hover:bg-primary hover:text-white transition-all"
+            >Get Quote</a
+          >
+
+          <!-- Mobile Menu Button -->
+          <button id="mobile-menu-btn" class="md:hidden z-50 text-white">
+            <svg
+              class="w-7 h-7"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                id="menu-open"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2.5"
+                d="M4 6h16M4 12h16M4 18h16"
+              />
+              <path
+                id="menu-close"
+                class="hidden"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2.5"
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </button>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden pb-6">
+          <div class="flex flex-col space-y-4">
+            <a href="{% url 'homepage' %}" class="text-white font-semibold hover:text-primary transition py-2">Home</a>
+            <a href="{% url 'about' %}" class="text-white font-semibold hover:text-primary transition py-2">About Us</a>
+            <a href="{% url 'blog' %}" class="text-white font-semibold hover:text-primary transition py-2">Blog</a>
+            
+            <!-- Mobile Services Dropdown -->
+            <div>
+              <button id="mobile-services-toggle" class="w-full flex justify-between items-center text-white font-semibold hover:text-primary transition py-2">
+                <span><a href="{% url 'services' %}">Services</a></span>
+                <svg id="services-arrow" class="w-5 h-5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                </svg>
+              </button>
+              <div id="mobile-services-menu" class="hidden pl-6 mt-2 space-y-3">
+                <a href="{% url 'service_detail' service_slug='web-development' %}" class="block px-5 py-3 text-white hover:bg-gray-800 hover:text-primary rounded-t-lg font-medium transition">Web Development</a>
+                <a href="{% url 'service_detail' service_slug='web-design' %}" class="block px-5 py-3 text-white hover:bg-gray-800 hover:text-primary font-medium transition">Web Design</a>
+                <a href="{% url 'service_detail' service_slug='app-development' %}" class="block px-5 py-3 text-white hover:bg-gray-800 hover:text-primary font-medium transition">Mobile App Development</a>
+                <a href="{% url 'service_detail' service_slug='content-writing' %}" class="block px-5 py-3 text-white hover:bg-gray-800 hover:text-primary font-medium transition">Content Writing</a>
+                <a href="{% url 'service_detail' service_slug='seo' %}" class="block px-5 py-3 text-white hover:bg-gray-800 hover:text-primary font-medium transition">SEO</a>
+                <a href="{% url 'service_detail' service_slug='business-registration' %}" class="block px-5 py-3 text-white hover:bg-gray-800 hover:text-primary font-medium transition">Business Registration</a>
+                <a href="{% url 'service_detail' service_slug='ui-ux-design' %}" class="block px-5 py-3 text-white hover:bg-gray-800 hover:text-primary font-medium transition">UI/UX Design</a>
+                <a href="{% url 'service_detail' service_slug='blockchain-development' %}" class="block px-5 py-3 text-white hover:bg-gray-800 hover:text-primary rounded-b-lg font-medium transition">Blockchain Development</a>
+              </div>
+            </div>
+
+            <a href="projects.html" class="text-white font-semibold hover:text-primary transition py-2">Projects</a>
+            
+           <div class="text-center">
+             <a href="{% url 'contact' %}" class="w-50 px-8 py-2.5 bg-transparent border-2 border-primary rounded-full font-bold text-white hover:bg-primary hover:text-white transition-all text-center mt-4">Get Quote</a>
+           </div>
+          </div>
+        </div>
+      </section>
+    </nav>
+
+{% endblock %}

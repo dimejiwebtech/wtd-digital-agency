@@ -1,0 +1,568 @@
+{% extends 'blog_base.html' %}
+{% load static %}
+
+{% block title %}{{ single_post.title }} - WTD Digital Agency {% endblock %} 
+{% block meta_description %}{{ single_post.excerpt }}{% endblock %}
+
+{% block content %}
+
+<div class="min-h-screen bg-white py-12">
+  <div class="max-w-7xl mx-auto px-4 md:px-8">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      
+      <!-- Main Content -->
+      <div class="lg:col-span-2">
+        <article>
+          <!-- Category -->
+          <div class="flex items-center gap-4 mb-4">
+            {% for cat in single_post.category.all %}
+            <a href="{% url 'posts_by_category_page_or_post' slug=cat.slug %}" class="text-sm font-bold uppercase text-primary hover:text-primary/80">
+              {{ cat.name }}
+            </a>
+            {% endfor %}
+          </div>
+
+          <!-- Title -->
+          <h1 class="text-3xl md:text-4xl font-bold text-gray-900  leading-tight">
+            {{ single_post.title }}
+          </h1>
+
+          <!-- Excerpt -->
+          <p class="text-xl text-gray-600 leading-relaxed py-3">
+            {{ single_post.excerpt | safe }}
+          </p>
+
+      <!-- Author & Meta Info -->
+       <div class="mb-6 pb-6 border-b border-gray-200">
+        <div class="flex flex-col sm:flex-row sm:items-center gap-4">
+          <div class="flex items-center gap-3 py-2">
+            {% if single_post.author.profile.profile_image %}
+            <img src="{{ single_post.author.profile.profile_image.url }}" alt="{{ single_post.author_display_name }}" class="w-12 h-12 rounded-full object-cover">
+            {% else %}
+            <div class="w-12 h-12 rounded-full bg-primary text-white flex items-center justify-center font-bold text-sm">
+              {{ single_post.author_display_name|first|upper }}
+            </div>
+            {% endif %}
+            <div>
+              <p class="font-semibold text-gray-900">By <a href="{% url 'author_page' single_post.author.username %}">{{ single_post.author_display_name }}</a></p>
+            </div>
+          </div>
+          <div class="flex flex-wrap items-center gap-3 text-sm text-gray-600">
+            <time>{{ single_post.published_date|date:"F j, Y" }}</time>
+            <span class="hidden sm:inline">•</span>
+            <span class="flex items-center gap-1">
+              <i class="far fa-comment"></i>
+              {{ total_comments }}
+            </span>
+            <span class="hidden sm:inline">•</span>
+            <span>{{ single_post.read_time }} min read</span>
+          </div>
+        </div>
+      </div>
+
+          <!-- Social Share -->
+          <div class="flex items-center gap-3 mb-6">
+            <span class="text-sm font-semibold text-gray-700">Share:</span>
+            <a href="https://twitter.com/intent/tweet?url={{ request.build_absolute_uri }}&text={{ single_post.title }}" target="_blank" class="w-9 h-9 flex items-center justify-center rounded-full bg-gray-100 hover:bg-sky-500 hover:text-white transition">
+              <i class="fab fa-twitter text-sm"></i>
+            </a>
+            <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri }}" target="_blank" class="w-9 h-9 flex items-center justify-center rounded-full bg-gray-100 hover:bg-blue-600 hover:text-white transition">
+              <i class="fab fa-facebook-f text-sm"></i>
+            </a>
+            <a href="https://www.linkedin.com/shareArticle?mini=true&url={{ request.build_absolute_uri }}&title={{ single_post.title }}" target="_blank" class="w-9 h-9 flex items-center justify-center rounded-full bg-gray-100 hover:bg-blue-700 hover:text-white transition">
+              <i class="fab fa-linkedin-in text-sm"></i>
+            </a>
+            <a href="https://wa.me/?text={{ single_post.title }}%20{{ request.build_absolute_uri }}" target="_blank" class="w-9 h-9 flex items-center justify-center rounded-full bg-gray-100 hover:bg-green-600 hover:text-white transition">
+              <i class="fab fa-whatsapp text-sm"></i>
+            </a>
+          </div>
+
+          <!-- Featured Image -->
+          {% if single_post.featured_image %}
+          <div class="mb-8 rounded-lg overflow-hidden" style="max-height: 500px;">
+            <img src="{{ single_post.featured_image.url }}" alt="{{ single_post.title }}" class="w-full h-full object-cover">
+          </div>
+          {% endif %}
+
+          <!-- Content with TOC Injection -->
+          <div class="prose-content text-gray-800 leading-relaxed" id="article-content">
+            {{ single_post.content | safe }}
+          </div>
+        </article>
+
+        <!-- Author Profile -->
+        <div class="mt-12 p-6 bg-gray-50 rounded-lg border border-gray-200">
+          <h3 class="text-xl font-bold text-gray-900 mb-4">About the Author</h3>
+          <div class="flex gap-4">
+            {% if single_post.author.profile.profile_image %}
+            <img src="{{ single_post.author.profile.profile_image.url }}" alt="{{ single_post.author_display_name }}" class="w-20 h-20 rounded-full object-cover flex-shrink-0">
+            {% else %}
+            <div class="w-20 h-20 rounded-full bg-primary text-white flex items-center justify-center font-bold text-2xl flex-shrink-0">
+              {{ single_post.author_display_name|first|upper }}
+            </div>
+            {% endif %}
+            <div class="flex-1">
+              <h4 class="font-bold text-gray-900 mb-2"><a href="{% url 'author_page' single_post.author.username %}">{{ single_post.author_display_name }}</a></h4>
+              <p class="text-sm text-gray-700 mb-3">{{ single_post.author.profile.bio|default:"Writer and content creator at WTD Digital Agency." }}</p>
+              
+              {% if single_post.author.profile.social_links %}
+              <div class="flex gap-2">
+                {% for link in single_post.author.profile.social_links %}
+                <a href="{{ link.url }}" target="_blank" class="w-8 h-8 flex items-center justify-center rounded-full {{ link.color }} text-white text-xs transition">
+                  <i class="{{ link.icon }}"></i>
+                </a>
+                {% endfor %}
+              </div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+
+        <!-- Related Posts by Category -->
+        {% if related_posts %}
+        <div class="mt-12">
+          <h3 class="text-2xl font-bold text-gray-900 mb-6">Related Articles</h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {% for post in related_posts %}
+            <article class="group border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition-shadow">
+              <div class="relative h-48 overflow-hidden">
+                {% if post.featured_image %}
+                <img src="{{ post.featured_image.url }}" alt="{{ post.title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                {% else %}
+                <div class="w-full h-full bg-gradient-to-br from-gray-200 to-gray-300"></div>
+                {% endif %}
+              </div>
+              <div class="p-4">
+                <h4 class="text-lg font-bold text-gray-900 mb-2 line-clamp-2">
+                  <a href="{% url 'posts_by_category_page_or_post' slug=post.slug %}" class="hover:text-primary transition-colors">
+                    {{ post.title }}
+                  </a>
+                </h4>
+                <p class="text-sm text-gray-700 line-clamp-2">{{ post.excerpt | safe  }}</p>
+              </div>
+            </article>
+            {% endfor %}
+          </div>
+        </div>
+        {% endif %}
+
+        <!-- Comments Section -->
+        <div class="mt-12" id="comments">
+          <h3 class="text-2xl font-bold text-gray-900 mb-6">Comments ({{ total_comments }})</h3>
+
+            {% if messages %}
+              {% for message in messages %}
+              <div class="mb-6 p-4 bg-green-50 border border-green-200 text-green-800 rounded-lg">
+                {{ message }}
+              </div>
+              {% endfor %}
+            {% endif %}
+
+          <!-- Comment Form -->
+          <div class="mb-8 p-6 bg-gray-50 rounded-lg border border-gray-200">
+            <h4 class="text-lg font-semibold text-gray-900 mb-4">Leave a Comment</h4>
+
+            <form method="post" action="{% url 'posts_by_category_page_or_post' slug=single_post.slug %}#comments">
+              {% csrf_token %}
+              <div class="space-y-4">
+                <div>
+                  <label for="id_name" class="block text-sm font-semibold text-gray-700 mb-2">Name</label>
+                  {{ comment_form.name }}
+                  {% if comment_form.name.errors %}
+                  <p class="text-sm text-red-600 mt-1">{{ comment_form.name.errors.0 }}</p>
+                  {% endif %}
+                </div>
+                <div>
+                  <label for="id_email" class="block text-sm font-semibold text-gray-700 mb-2">Email</label>
+                  {{ comment_form.email }}
+                  {% if comment_form.email.errors %}
+                  <p class="text-sm text-red-600 mt-1">{{ comment_form.email.errors.0 }}</p>
+                  {% endif %}
+                </div>
+                <div>
+                  <label for="id_body" class="block text-sm font-semibold text-gray-700 mb-2">Comment</label>
+                  {{ comment_form.body }}
+                  {% if comment_form.body.errors %}
+                  <p class="text-sm text-red-600 mt-1">{{ comment_form.body.errors.0 }}</p>
+                  {% endif %}
+                </div>
+                <button type="submit" class="px-6 py-3 bg-primary text-white font-semibold rounded-lg hover:bg-primary/90 transition">
+                  Post Comment
+                </button>
+              </div>
+            </form>
+          </div>
+
+         <!-- Comments List -->
+        <div class="space-y-6">
+          {% for comment in comments %}
+          <div class="p-6 bg-white border border-gray-200 rounded-lg">
+            <div class="flex items-center gap-3 mb-3">
+              <div class="w-10 h-10 bg-primary text-white rounded-full flex items-center justify-center font-bold">
+                {{ comment.name|first|upper }}
+              </div>
+              <div>
+                <h5 class="font-semibold text-gray-900">{{ comment.name }}</h5>
+                <time class="text-sm text-gray-500">{{ comment.created_at|date:"F j, Y" }}</time>
+              </div>
+            </div>
+            <p class="text-gray-700 mb-3">{{ comment.body }}</p>
+            
+            <!-- Reply Button -->
+            <button onclick="toggleReplyForm({{ comment.id }})" class="text-sm text-primary hover:text-primary/80 font-semibold">
+              Reply
+            </button>
+            
+            <!-- Reply Form -->
+            <div id="reply-form-{{ comment.id }}" class="hidden mt-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
+              <h6 class="text-sm font-semibold text-gray-900 mb-3">Reply to {{ comment.name }}</h6>
+              <form method="post" action="{% url 'posts_by_category_page_or_post' slug=single_post.slug %}#comments">
+                {% csrf_token %}
+                <input type="hidden" name="parent_id" value="{{ comment.id }}">
+                <div class="space-y-3">
+                  <div>
+                    <input type="text" name="name" placeholder="Your Name" required class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary">
+                  </div>
+                  <div>
+                    <input type="email" name="email" placeholder="Your Email" required class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary">
+                  </div>
+                  <div>
+                    <textarea name="body" rows="3" placeholder="Your Reply" required class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary resize-vertical"></textarea>
+                  </div>
+                  <div class="flex gap-2">
+                    <button type="submit" class="px-4 py-2 bg-primary text-white text-sm font-semibold rounded-lg hover:bg-primary/90 transition">
+                      Post Reply
+                    </button>
+                    <button type="button" onclick="toggleReplyForm({{ comment.id }})" class="px-4 py-2 bg-gray-200 text-gray-700 text-sm font-semibold rounded-lg hover:bg-gray-300 transition">
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </div>
+
+            <!-- Replies -->
+            {% if comment.replies.all %}
+            <div class="mt-4 pl-6 border-l-2 border-gray-200 space-y-4">
+              {% for reply in comment.replies.all %}
+              <div class="p-4 bg-gray-50 rounded-lg">
+                <div class="flex items-center gap-3 mb-2">
+                  <div class="w-8 h-8 bg-gray-400 text-white rounded-full flex items-center justify-center font-bold text-sm">
+                    {{ reply.name|first|upper }}
+                  </div>
+                  <div>
+                    <h6 class="font-semibold text-gray-900 text-sm">{{ reply.name }}</h6>
+                    <time class="text-xs text-gray-500">{{ reply.created_at|date:"F j, Y" }}</time>
+                  </div>
+                </div>
+                <p class="text-sm text-gray-700">{{ reply.body }}</p>
+              </div>
+              {% endfor %}
+            </div>
+            {% endif %}
+          </div>
+          {% empty %}
+          <p class="text-gray-500">No comments yet. Be the first to comment!</p>
+          {% endfor %}
+
+          {% if total_comments > 10 and not show_all %}
+          <div class="text-center">
+            <a href="?show_all_comments=true#comments" class="inline-block px-6 py-3 border border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 transition">
+              Load More Comments
+            </a>
+          </div>
+          {% endif %}
+        </div>
+
+        </div>
+      </div>
+
+      <!-- Sidebar (Sticky) -->
+      <aside class="lg:col-span-1">
+        <div class="sticky top-24 space-y-6">
+          <!-- Search Widget -->
+          <div class="p-6 bg-gray-50 rounded-lg border border-gray-200">
+            <h4 class="text-lg font-bold text-gray-900 mb-4">Search</h4>
+            <form method="get" action="{% url 'search' %}">
+              <div class="relative">
+                <input type="search" name="q" placeholder="Search articles..." class="w-full px-4 py-2 pr-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
+                <button type="submit" class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-primary">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                  </svg>
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Related Posts Sidebar -->
+          {% if sidebar_related_posts %}
+          <div class="p-6 bg-gray-50 rounded-lg border border-gray-200">
+            <h4 class="text-lg font-bold text-gray-900 mb-4">Related Posts</h4>
+            <div class="space-y-4">
+              {% for post in sidebar_related_posts %}
+              <article class="group flex gap-3">
+                <div class="w-20 h-20 flex-shrink-0 rounded overflow-hidden">
+                  {% if post.featured_image %}
+                  <img src="{{ post.featured_image.url }}" alt="{{ post.title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                  {% else %}
+                  <div class="w-full h-full bg-gradient-to-br from-gray-200 to-gray-300"></div>
+                  {% endif %}
+                </div>
+                <div class="flex-1">
+                  <h5 class="text-sm font-bold text-gray-900 line-clamp-2 mb-1">
+                    <a href="{% url 'posts_by_category_page_or_post' slug=post.slug %}" class="hover:text-primary transition-colors">
+                      {{ post.title }}
+                    </a>
+                  </h5>
+                  <time class="text-xs text-gray-500">{{ post.published_date|date:"M j, Y" }}</time>
+                </div>
+              </article>
+              {% endfor %}
+            </div>
+          </div>
+          {% endif %}
+        </div>
+      </aside>
+    </div>
+  </div>
+</div>
+
+<!-- TOC Script with Numbering -->
+<script>
+
+function toggleReplyForm(commentId) {
+  const form = document.getElementById('reply-form-' + commentId);
+  form.classList.toggle('hidden');
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  const content = document.getElementById('article-content');
+  const headings = content.querySelectorAll('h2, h3, h4');
+  
+  if (headings.length > 2) {
+    const paragraphs = content.querySelectorAll('p');
+    
+    if (paragraphs.length >= 3) {
+      let h2Count = 0;
+      let h3Count = 0;
+      let h4Count = 0;
+      
+      const tocItems = Array.from(headings).map((h, i) => {
+        const id = 'heading-' + i;
+        h.id = id;
+        h.style.scrollMarginTop = '100px';
+        
+        let number = '';
+        let level = '';
+        
+        if (h.tagName === 'H2') {
+          h2Count++;
+          h3Count = 0;
+          h4Count = 0;
+          number = h2Count + '.0';
+          level = '';
+        } else if (h.tagName === 'H3') {
+          h3Count++;
+          h4Count = 0;
+          number = h2Count + '.' + h3Count;
+          level = 'ml-4';
+        } else if (h.tagName === 'H4') {
+          h4Count++;
+          number = h2Count + '.' + h3Count + '.' + h4Count;
+          level = 'ml-8';
+        }
+        
+        return `<li class="${level} list-none"><a href="#${id}" class="toc-link text-primary hover:text-primary/80 transition text-sm block py-1">${number} ${h.textContent}</a></li>`;
+      }).join('');
+      
+      const tocHtml = `
+        <div class="my-8 p-6 bg-gray-50 rounded-lg border border-gray-200">
+          <div class="flex items-center justify-center gap-8 mb-4">
+            <h3 class="text-xl font-bold text-gray-900">Table of Contents</h3>
+            <button id="toc-toggle" class="text-primary hover:text-primary/80 transition text-sm font-semibold">
+              Hide
+            </button>
+          </div>
+          <ul id="toc-list" class="space-y-1 list-none">
+            ${tocItems}
+          </ul>
+        </div>
+      `;
+      
+      paragraphs[2].insertAdjacentHTML('afterend', tocHtml);
+      
+      // Toggle functionality
+      const toggleBtn = document.getElementById('toc-toggle');
+      const tocList = document.getElementById('toc-list');
+      
+      toggleBtn.addEventListener('click', function() {
+        if (tocList.style.display === 'none') {
+          tocList.style.display = 'block';
+          toggleBtn.textContent = 'Hide';
+        } else {
+          tocList.style.display = 'none';
+          toggleBtn.textContent = 'Show';
+        }
+      });
+      
+      // Smooth scroll to heading
+      document.querySelectorAll('.toc-link').forEach(link => {
+        link.addEventListener('click', function(e) {
+          e.preventDefault();
+          const targetId = this.getAttribute('href');
+          const targetElement = document.querySelector(targetId);
+          if (targetElement) {
+            targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        });
+      });
+    }
+  }
+});
+</script>
+
+<style>
+  /* Form Styles */
+  #id_name, #id_email, #id_body {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+  }
+  #id_body {
+    min-height: 120px;
+    resize: vertical;
+  }
+  #id_name:focus, #id_email:focus, #id_body:focus {
+    outline: none;
+    border-color: #10b981;
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+  }
+
+  /* Content Styles - Better Typography */
+  .prose-content {
+    font-size: 1.125rem;
+    line-height: 1.8;
+  }
+  
+  .prose-content h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-top: 2.5rem;
+    margin-bottom: 1.25rem;
+    color: #111827;
+    line-height: 1.3;
+  }
+  
+  .prose-content h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    color: #111827;
+    line-height: 1.4;
+  }
+  
+  .prose-content h4 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-top: 1.75rem;
+    margin-bottom: 0.875rem;
+    color: #111827;
+    line-height: 1.5;
+  }
+  
+  .prose-content p {
+    margin-bottom: 1.5rem;
+    font-weight: 400;
+  }
+  
+
+
+  /* List Styles */
+.prose-content ul {
+  list-style-type: disc;
+  margin-bottom: 1.5rem;
+  padding-left: 2.5rem;
+  margin-left: 1rem;
+  overflow: hidden;
+}
+
+.prose-content ol {
+  list-style-type: decimal;
+  margin-bottom: 1.5rem;
+  padding-left: 2.5rem;
+  margin-left: 1rem;
+  overflow: hidden;
+}
+
+.prose-content ul ul {
+  list-style-type: circle;
+  margin-top: 0.5rem;
+}
+
+.prose-content ol ol {
+  list-style-type: lower-alpha;
+  margin-top: 0.5rem;
+}
+
+.prose-content li {
+  margin-bottom: 0.5rem;
+  padding-left: 0.5rem;
+}
+  
+  .prose-content strong {
+    font-weight: 600;
+    color: #111827;
+  }
+  
+  .prose-content a {
+    color: #10b981;
+    text-decoration: none;
+  }
+  
+  .prose-content a:hover {
+    color: #059669;
+  }
+  
+  .prose-content blockquote {
+    border-left: 4px solid #10b981;
+    padding-left: 1.25rem;
+    margin: 1.5rem 0;
+    font-style: italic;
+    color: #4b5563;
+  }
+  
+  .prose-content img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 0.5rem;
+    margin: 1.5rem 0;
+  }
+  
+  .prose-content code {
+    background-color: #f3f4f6;
+    padding: 0.2rem 0.4rem;
+    border-radius: 0.25rem;
+    font-size: 0.875em;
+    color: #dc2626;
+  }
+  
+  .prose-content pre {
+    background-color: #1f2937;
+    color: #f9fafb;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    overflow-x: auto;
+    margin: 1.5rem 0;
+  }
+  
+  .prose-content pre code {
+    background-color: transparent;
+    color: inherit;
+    padding: 0;
+  }
+</style>
+{% endblock %}

@@ -1,0 +1,104 @@
+{% load static %}
+
+<section class="bg-gradient-to-b from-black via-gray-950 to-black py-20">
+  <div class="container mx-auto px-4 md:px-8">
+    <!-- Section Header -->
+    <div class="text-center mb-16">
+      <h2 class="text-3xl md:text-4xl font-bold mb-4 text-primary">
+        What Our Clients Say
+      </h2>
+      <p class="text-gray-400 text-lg max-w-2xl mx-auto">
+        Trusted by businesses worldwide to deliver exceptional results
+      </p>
+    </div>
+
+    <!-- Testimonials Grid -->
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+      {% for testimonial in testimonials %}
+      <div
+        class="testimonial-item {% if forloop.counter > 3 %}hidden{% endif %} opacity-0 transform translate-y-4 transition-all duration-300 ease-out"
+        data-index="{{ forloop.counter0 }}"
+      >
+        <div
+          class="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-2xl p-8 hover:border-primary/50 transition-all h-full"
+        >
+          <p class="text-gray-300 text-lg mb-6 leading-relaxed">
+            "{{ testimonial.message }}"
+          </p>
+          <div class="flex items-center gap-4">
+            {% if testimonial.image %}
+            <img
+              src="{{ testimonial.image.url }}"
+              alt="{{ testimonial.name }}"
+              class="w-12 h-12 rounded-full object-cover"
+            />
+            {% else %}
+            <div
+              class="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center text-primary font-bold text-lg"
+            >
+              {{ testimonial.name|slice:":2"|upper }}
+            </div>
+            {% endif %}
+            <div>
+              <p class="text-white font-semibold">{{ testimonial.name }}</p>
+              <p class="text-gray-500 text-sm">
+                {{ testimonial.position }}, {{ testimonial.company }}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const testimonials = document.querySelectorAll('.testimonial-item');
+    let currentIndex = 0;
+    let interval;
+
+    function showTestimonials(startIndex) {
+      // Hide all testimonials
+      testimonials.forEach((item) => {
+        item.classList.add('hidden', 'opacity-0', 'translate-y-4');
+      });
+
+      // Show next set of testimonials with staggered animation
+      for (let i = 0; i < 3; i++) {
+        const index = (startIndex + i) % testimonials.length;
+        const item = testimonials[index];
+
+        item.classList.remove('hidden');
+        setTimeout(() => {
+          item.classList.remove('opacity-0', 'translate-y-4');
+        }, i * 100);
+      }
+
+      currentIndex = startIndex;
+    }
+
+    function nextTestimonials() {
+      const nextIndex = (currentIndex + 3) % testimonials.length;
+      showTestimonials(nextIndex);
+    }
+
+    // Show initial testimonials
+    showTestimonials(0);
+
+    // Start rotation if there are more than 3 testimonials
+    if (testimonials.length > 3) {
+      interval = setInterval(nextTestimonials, 5000);
+    }
+
+    // Pause on hover
+    const container = testimonials[0].parentElement;
+    container.addEventListener('mouseenter', () => clearInterval(interval));
+    container.addEventListener('mouseleave', () => {
+      if (testimonials.length > 3) {
+        interval = setInterval(nextTestimonials, 5000);
+      }
+    });
+  });
+</script>

@@ -1,0 +1,71 @@
+{% extends 'dashboard_base.html' %}
+
+{% load static %}
+
+{% block content %}
+<title>{% block title %} Media Library > Add Media - WTD-Digital {% endblock %}</title>
+
+
+<!-- Main Content -->
+<section id="main-content" class="min-h-screen pt-12">
+
+
+<!-- add media code -->
+    <!-- Header Section -->
+    <div class="mb-6">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <h1 class="text-2xl font-bold text-gray-900">Media Library</h1>
+            <button id="add-media-btn" 
+                    class="inline-flex items-center px-4 py-2 bg-primary text-white text-sm font-medium rounded-lg hover:bg-accent transition-colors">
+                <i class="fas fa-plus mr-2"></i>
+                Add Media File
+            </button>
+        </div>
+    </div>
+<!-- Upload Box -->
+    <div id="upload-box" class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+    <div class="flex items-center justify-between mb-4">
+        <h3 class="text-lg font-medium text-gray-900">Upload Files</h3>
+        <button id="close-upload-btn" class="text-gray-400 hover:text-gray-600">
+            <i class="fas fa-times text-xl"></i>
+        </button>
+    </div>
+    
+    <form id="upload-form" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-gray-400 transition-colors">
+            <div class="mb-4">
+                <i class="fas fa-cloud-upload-alt text-4xl text-gray-400"></i>
+            </div>
+            <div class="mb-4">
+                <label for="file-input" class="cursor-pointer">
+                    <span class="text-lg font-medium text-gray-700">Drop files here or click to browse</span>
+                    <input type="file" id="file-input" name="files" multiple class="hidden" accept="*/*">
+                </label>
+            </div>
+            <p class="text-sm text-gray-500">Support for a single or bulk upload. Strictly prohibit from uploading company data or other banned files</p>
+        </div>
+        
+        <div class="mt-4 flex justify-end">
+            <button type="submit" id="upload-submit-btn" disabled
+                    class="px-4 py-2 bg-primary text-white text-sm font-medium rounded-lg hover:bg-accent disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors">
+                Upload Files
+            </button>
+        </div>
+    </form>
+    
+    <!-- Upload Progress -->
+    <div id="upload-progress" class="hidden mt-4">
+        <div class="bg-gray-200 rounded-full h-2">
+            <div id="progress-bar" class="bg-primary h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+        </div>
+        <p id="upload-status" class="text-sm text-gray-600 mt-2">Uploading...</p>
+    </div>
+</div>
+
+
+
+</section>
+<script src="{% static 'js/dashboard/media_library.js' %}"></script>
+
+{% endblock %}

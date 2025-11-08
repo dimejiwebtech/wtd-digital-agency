@@ -1,0 +1,142 @@
+{% extends 'dashboard_base.html' %}
+{% load static %}
+
+{% block content %}
+<title>{% block title %} {% if page %}Edit {{page.title}} {% else %}Add New Page{% endif %} - WTD-Digital {% endblock %}</title>
+
+<section id="main-content" class="min-h-screen">
+
+    <div class="container mx-auto px-5 md:px-6 xl:px-8">
+        <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6 gap-4">
+            <h1 class="text-2xl sm:text-3xl font-bold text-gray-900">
+                {% if page %}Edit Page{% else %}Add New Page{% endif %}
+            </h1>
+        </div>
+
+        <form id="content-form" method="post" class="flex flex-col lg:flex-row gap-4">
+            {% csrf_token %}
+            {{form.media}}
+            
+            <div class="flex-1 space-y-6 order-2 lg:order-1 lg:max-w-4xl">
+                <!-- Title Section -->
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+                    {{ form.title }}
+                    
+                    <!-- Permalink Section -->
+                    <div id="permalink-section" class="px-4 pb-4 border-t border-gray-100 {% if not page.title and not form.title.value %}hidden{% endif %}">
+                        <div class="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-2 text-sm">
+                            <span class="text-gray-600">Permalink:</span>
+                            <div class="flex items-center gap-1 flex-wrap">
+                                <span class="text-gray-600">{{ request.get_host }}/blog/</span>
+                                <div id="slug-display" class="text-blue-600">{{ page.slug|default:form.slug.value|default:"" }}</div>
+                                <div id="slug-edit" class="hidden">
+                                    {{ form.slug }}
+                                </div>
+                                <button type="button" id="edit-slug-btn" onclick="contentEditor.editPermalink()" class="text-blue-600 hover:text-blue-800 ml-2">Edit</button>
+                                <button type="button" id="save-slug-btn" onclick="contentEditor.savePermalink()" class="text-green-600 hover:text-green-800 ml-2 hidden">Save</button>
+                                <button type="button" id="cancel-slug-btn" onclick="contentEditor.cancelEditPermalink()" class="text-gray-600 hover:text-gray-800 ml-1 hidden">Cancel</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Editor Section -->
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+                    <div class="p-4">
+                       {{ form.content }}
+                    </div>
+                </div>
+
+                <!-- SEO Section -->
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+                    <div class="px-4 py-3 border-b border-gray-200">
+                        <h3 class="text-lg font-medium text-gray-900">SEO Settings</h3>
+                    </div>
+                    <div class="p-4 space-y-4">
+                        <div>
+                            <label for="id_seo_description" class="block text-sm font-medium text-gray-700 mb-2">
+                                Meta Description <span class="text-gray-500 font-normal">(160 characters max)</span>
+                            </label>
+                            {{ form.seo_description }}
+                            <div class="flex justify-between items-center text-xs mt-1">
+                                <div class="text-right">
+                                    <span id="seo-char-count" class="text-gray-500">0</span><span class="text-gray-500">/160</span>
+                                </div>
+                                <span id="seo-char-warning" class="text-red-500 font-medium hidden">Exceeds limit!</span>
+                            </div>
+                        </div>
+                        <div>
+                            <label for="id_seo_keywords" class="block text-sm font-medium text-gray-700 mb-2">Keywords</label>
+                            {{ form.seo_keywords }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Sidebar -->
+            <div class="w-full lg:w-72 xl:w-80 space-y-6 order-1 lg:order-2">
+                <!-- Publish Box -->
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+                    <div class="px-4 py-3 border-b border-gray-200">
+                        <h3 class="text-lg font-medium text-gray-900">Publish</h3>
+                    </div>
+                    <div class="p-4 space-y-4">
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm text-gray-600">Status:</span>
+                                <span class="text-sm font-medium" id="content-status">
+                                    {% if page %}{{ page.get_status_display }}{% else %}Draft{% endif %}
+                                </span>
+                            </div>
+                            <div>
+                                <label for="id_published_date" class="block text-sm text-gray-600 mb-1">Publish Date:</label>
+                                {{ form.published_date }}
+                            </div>
+                        </div>
+
+                        <div class="space-y-2 pt-4 border-t border-gray-200">
+                            <button type="submit" name="save_draft" class="w-full px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition-colors text-sm cursor-pointer">
+                                Save Draft
+                            </button>
+                            <button type="button" onclick="contentEditor.preview()" class="w-full px-4 py-2 bg-blue-100 text-blue-700 rounded-md hover:bg-blue-200 transition-colors text-sm cursor-pointer">
+                                Preview
+                            </button>
+                            <button type="submit" name="publish" class="w-full px-4 py-2 bg-primary text-white rounded-md hover:bg-accent transition-colors text-sm cursor-pointer">
+                                {% if page and page.status == 'published' %}Update{% else %}Publish{% endif %}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Auto-save indicator -->
+    <div id="autosave-indicator" class="fixed bottom-4 right-4 bg-green-100 text-green-800 px-4 py-2 rounded-md shadow-lg hidden z-50">
+        <div class="flex items-center text-sm">
+            <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-green-800" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            Saving...
+        </div>
+    </div>
+</section>
+
+<script>
+window.djangoData = {
+    urls: {
+        generateSlug: "{% url 'generate_slug_page' %}",
+        autoSave: "{% url 'auto_save_page' %}",
+        editUrl: "/dashboard/pages/edit-page/",
+        previewUrl: "/dashboard/page-preview/",
+    },
+    contentId: {% if page %}{{ page.id }}{% else %}null{% endif %},
+    contentType: 'page',
+    csrfToken: "{{ csrf_token }}"
+};
+</script>
+
+<script src="{% static 'js/dashboard/content-editor.js' %}"></script>
+
+{% endblock %}

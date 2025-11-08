@@ -1,0 +1,227 @@
+{% extends 'dashboard_base.html' %}
+{% load static %}
+
+{% block content %}
+<title>{% block title %} {% if post %}Edit {{post.title}} {% else %}Add New Post{% endif %} - WTD-Digital {% endblock %}</title>
+
+<!-- Main Content -->
+<section id="main-content" class=" min-h-screen pt-12">
+
+        <!-- Toggle Button -->
+    <div class="container mx-auto px-4 sm:px-6 lg:px-6 xl:px-8">
+        <!-- Header -->
+        <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6 gap-4">
+            <h1 class="text-2xl sm:text-3xl font-bold text-gray-900">
+                {% if post %}Edit Post{% else %}Add New Post{% endif %}
+            </h1>
+        </div>
+
+        <form id="post-form" method="post" enctype="multipart/form-data" class="flex flex-col lg:flex-row gap-4">
+            {% csrf_token %}
+            {{form.media}}
+            
+            <!-- Left Column - Main Content -->
+            <div class="flex-1 space-y-6 order-2 lg:order-1 lg:max-w-4xl">
+                <!-- Title Section -->
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+                    {{ form.title }}
+                    
+                    <!-- Permalink Section -->
+                    <div id="permalink-section" class="px-4 pb-4 border-t border-gray-100 {% if not post.title and not form.title.value %}hidden{% endif %}">
+                        <div class="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-2 text-sm">
+                            <span class="text-gray-600">Permalink:</span>
+                            <div class="flex items-center gap-1 flex-wrap">
+                                <span class="text-gray-600">{{ request.get_host }}/</span>
+                                <div id="slug-display" class="text-primary">{{ post.slug|default:form.slug.value|default:"" }}</div>
+                                <div id="slug-edit" class="hidden">
+                                    {{ form.slug }}
+                                </div>
+                                <button type="button" id="edit-slug-btn" onclick="editPermalink()" class="text-primary hover:text-accent ml-2 cursor-pointer">Edit</button>
+                                <button type="button" id="save-slug-btn" onclick="savePermalink()" class="text-green-600 hover:text-green-800 ml-2 hidden cursor-pointer">Save</button>
+                                <button type="button" id="cancel-slug-btn" onclick="cancelEditPermalink()" class="text-gray-600 hover:text-gray-800 ml-1 hidden cursor-pointer ">Cancel</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Editor Section -->
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+                    <div class="px-4 py-3 border-b border-gray-200">
+                        <button type="button" onclick="openMediaLibrary()" class="inline-flex items-center px-3 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition-colors text-sm cursor-pointer">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                            </svg>
+                            Add Media
+                        </button>
+                    </div>
+                    
+                    <div class="p-4">
+                       {{ form.content }}
+                    </div>
+                </div>
+
+                <!-- Excerpt Section -->
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+                    <div class="px-4 py-3 border-b border-gray-200">
+                        <h3 class="text-lg font-medium text-gray-900">Excerpt</h3>
+                        <p class="text-sm text-gray-600">Excerpts are optional hand-crafted summaries of your content.</p>
+                    </div>
+                    <div class="p-4">
+                        {{ form.excerpt }}
+                    </div>
+                </div>
+
+                <!-- SEO Section -->
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+                    <div class="px-4 py-3 border-b border-gray-200">
+                        <h3 class="text-lg font-medium text-gray-900">SEO Settings</h3>
+                    </div>
+                    <div class="p-4 space-y-4">
+                        <div>
+                            <label for="id_seo_description" class="block text-sm font-medium text-gray-700 mb-2">
+                                Meta Description
+                                <span class="text-gray-500 font-normal">(160 characters max)</span>
+                            </label>
+                            {{ form.seo_description }}
+                            <div class="flex justify-between items-center text-xs mt-1">
+                                <div class="text-right">
+                                    <span id="seo-char-count" class="text-gray-500">0</span><span class="text-gray-500">/160</span>
+                                </div>
+                                <span id="seo-char-warning" class="text-red-500 font-medium hidden">Exceeds limit!</span>
+                            </div>
+                        </div>
+                        <div>
+                            <label for="id_seo_keywords" class="block text-sm font-medium text-gray-700 mb-2">Keywords</label>
+                            {{ form.seo_keywords }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Sidebar - Compact -->
+            <div class="w-full lg:w-72 xl:w-80 space-y-6 order-1 lg:order-2">
+                <!-- Publish Box -->
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+                    <div class="px-4 py-3 border-b border-gray-200">
+                        <h3 class="text-lg font-medium text-gray-900">Publish</h3>
+                    </div>
+                    <div class="p-4 space-y-4">
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm text-gray-600">Status:</span>
+                                <span class="text-sm font-medium" id="post-status">
+                                    {% if post %}{{ post.get_status_display }}{% else %}Draft{% endif %}
+                                </span>
+                            </div>
+                            <div>
+                                <label for="id_published_date" class="block text-sm text-gray-600 mb-1">Publish Date:</label>
+                                {{ form.published_date }}
+                            </div>
+                        </div>
+
+                        <div class="space-y-2 pt-4 border-t border-gray-200">
+                            <button type="submit" name="save_draft" class="w-full px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition-colors text-sm cursor-pointer">
+                                Save Draft
+                            </button>
+                            <button type="button" onclick="contentEditor.preview()" class="w-full px-4 py-2 bg-blue-100 text-blue-700 rounded-md hover:bg-blue-200 transition-colors text-sm cursor-pointer">
+                                Preview
+                            </button>
+                            <button type="submit" name="publish" class="w-full px-4 py-2 bg-primary text-white rounded-md hover:bg-primary transition-colors text-sm cursor-pointer">
+                                {% if post and post.status == 'published' %}Update{% else %}Publish{% endif %}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+<!-- Featured Image Section -->
+<div class="bg-white rounded-lg shadow-sm border border-gray-200">
+    <div class="px-4 py-3 border-b border-gray-200">
+        <h3 class="text-lg font-medium text-gray-900">Featured Image</h3>
+    </div>
+    <div class="p-4">
+        <!-- Image Preview -->
+        <div id="featured-image-preview" class="{% if not post.featured_image %}hidden{% endif %} mb-4">
+            {% if post and post.featured_image %}
+                <img src="{{ post.featured_image.url }}" alt="Featured Image" class="w-full h-32 object-cover rounded-md">
+            {% else %}
+                <img src="" alt="Featured Image" class="w-full h-32 object-cover rounded-md">
+            {% endif %}
+            <button type="button" onclick="removeFeaturedImage()" class="text-sm text-red-600 hover:text-red-800 mt-2">
+                Remove featured image
+            </button>
+        </div>
+        
+        <!-- Hidden field to store selected image ID -->
+        <input type="hidden" id="selected-featured-image-id" name="featured_image_id" 
+       value="{% if form.featured_image_id.value %}{{ form.featured_image_id.value }}{% endif %}">
+        
+        <!-- Media Library Button -->
+        <div class="flex items-center justify-between p-3 border border-gray-300 rounded-md">
+            <span id="featured-image-name" class="text-sm text-gray-600 truncate">
+                {% if post and post.featured_image %}
+                    {{ post.featured_image.name|slice:"uploads/"|slice:"14:" }}
+                {% else %}
+                    No image selected
+                {% endif %}
+            </span>
+            <button type="button" onclick="openMediaLibrary('featured-image')" 
+                    class="px-4 py-2 bg-primary text-white text-sm font-medium rounded-md hover:bg-primary transition-colors whitespace-nowrap ml-2 cursor-pointer">
+                <i class="fas fa-photo-video mr-2"></i>
+                Select Image
+            </button>
+        </div>
+        
+        <p class="text-xs text-gray-500 mt-2">Select an image from your media library or upload a new one</p>
+    </div>
+</div>
+
+<!-- Category -->
+<div class="bg-white rounded-lg shadow-sm border border-gray-200">
+    <div class="px-4 py-3 border-b border-gray-200">
+        <h3 class="text-lg font-medium text-gray-900">Categories</h3>
+    </div>
+    <div class="p-4 space-y-2">
+        {% for category in categories %}
+            <label class="flex items-center">
+                <input type="checkbox" name="category" value="{{ category.id }}" 
+                       {% if post and category in post.category.all %}checked{% endif %}
+                       class="rounded border-gray-300 text-primary focus:ring-accent mr-2">
+                <span class="text-sm text-gray-700">{{ category.name }}</span>
+            </label>
+        {% endfor %}
+    </div>
+</div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Auto-save indicator -->
+    <div id="autosave-indicator" class="fixed bottom-4 right-4 bg-green-100 text-green-800 px-4 py-2 rounded-md shadow-lg hidden z-50">
+        <div class="flex items-center text-sm">
+            <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-green-800" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            Saving...
+        </div>
+    </div>
+</section>
+
+<script>
+window.djangoData = {
+    urls: {
+        generateSlug: "{% url 'generate_slug' %}",
+        autoSave: "{% url 'auto_save_post' %}",
+        editUrl: "/dashboard/posts/edit-post/",
+        previewUrl: "/dashboard/post-preview/",
+        removeFeaturedImage: "{% url 'remove_featured_image' %}",
+    },
+    contentId: {% if post %}{{ post.id }}{% else %}null{% endif %},
+    contentType: 'post',
+    csrfToken: "{{ csrf_token }}"
+};
+</script>
+
+<script src="{% static 'js/dashboard/content-editor.js' %}"></script>
+
+{% endblock %}

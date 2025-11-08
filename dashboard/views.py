@@ -5,7 +5,7 @@ from django.urls import reverse
 from django.core.paginator import Paginator
 from django.db.models import Q, Count
 from django.http import JsonResponse, QueryDict
-from blog.models import Category, Page, Post
+from blog.models import Category, Page, Post, Comment
 from django.contrib import messages
 from django.views.decorators.http import require_http_methods
 import json
@@ -632,8 +632,109 @@ def preview_post(request, pk):
     # Fallback for other statuses
     return redirect('dashboard')
 
-# Page Management
 
+#comments
+def comment(request):
+    # Get filter parameters
+    status = request.GET.get('status', 'all')
+    page = request.GET.get('page', 1)
+    
+    # Base queryset
+    comments = Comment.objects.select_related('post').order_by('-created_on')
+    
+    # Apply status filters
+    if status == 'mine':
+        comments = comments.filter(post__author=request.user)
+    elif status == 'pending':
+        comments = comments.filter(approved=False)
+    elif status == 'approved':
+        comments = comments.filter(approved=True)
+    
+    # Count for each status
+    all_count = Comment.objects.count()
+    mine_count = Comment.objects.filter(post__author=request.user).count()
+    pending_count = Comment.objects.filter(approved=False).count()
+    approved_count = Comment.objects.filter(approved=True).count()
+    
+    # Pagination
+    paginator = Paginator(comments, 10)
+    page_obj = paginator.get_page(page)
+    
+    context = {
+        'comments': page_obj,
+        'current_status': status,
+        'all_count': all_count,
+        'mine_count': mine_count,
+        'pending_count': pending_count,
+        'approved_count': approved_count,
+        'paginator': paginator,
+        'page_obj': page_obj,
+    }
+    
+    return render(request, 'dashboard/comments.html', context)
+
+def bulk_comment_action(request):
+    if request.method == 'POST':
+        action = request.POST.get('bulk_action')
+        comment_ids = request.POST.getlist('comment_ids')
+        
+        if comment_ids:
+            comments = Comment.objects.filter(id__in=comment_ids)
+            
+            if action == 'approve':
+                comments.update(approved=True)
+            elif action == 'unapprove':
+                comments.update(approved=False)
+            elif action == 'delete':
+                comments.delete()
+    
+    return redirect('comments')
+
+
+def comment_approve(request, comment_id):
+    comment = get_object_or_404(Comment, id=comment_id)
+    comment.approved = True
+    comment.save()
+    return redirect('comments')
+
+
+def comment_unapprove(request, comment_id):
+    comment = get_object_or_404(Comment, id=comment_id)
+    comment.approved = False
+    comment.save()
+    return redirect('comments')
+
+def comment_delete(request, comment_id):
+    comment = get_object_or_404(Comment, id=comment_id)
+    comment.delete()
+    return redirect('comments')
+
+
+def comment_edit(request, comment_id):
+    comment = get_object_or_404(Comment, id=comment_id)
+    if request.method == 'POST':
+        new_body = request.POST.get('comment_body')
+        if new_body:
+            comment.body = new_body
+            comment.save()
+    return redirect('comments')
+
+def comment_reply(request, comment_id):
+    comment = get_object_or_404(Comment, id=comment_id)
+    if request.method == 'POST':
+        reply_text = request.POST.get('reply_text')
+        if reply_text:
+            Comment.objects.create(
+                post=comment.post,
+                parent=comment,
+                name=request.user.get_full_name() or request.user.username,
+                email=request.user.email,
+                body=reply_text,
+                approved=True
+            )
+    return redirect('comments')
+
+# Page Management
 def pages(request):
     """Pages view - mirrors posts logic"""
     status_filter = request.GET.get('status', 'all')
@@ -1234,3 +1335,5 @@ def bulk_delete_media(request):
             })
     
     return JsonResponse({'error': 'Invalid request'}, status=400)
+
+

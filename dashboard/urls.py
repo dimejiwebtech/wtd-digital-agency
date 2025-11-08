@@ -17,6 +17,16 @@ path('generate-slug/', views.generate_slug_ajax, name='generate_slug'),
 path('remove-featured-image/', views.remove_featured_image, name='remove_featured_image'),
 # Post Management
 
+# comments
+path('comments/', views.comment, name='comments'),
+path('comments/bulk-action/', views.bulk_comment_action, name='bulk_comment_action'),
+path('comments/approve/<int:comment_id>/', views.comment_approve, name='comment_approve'),
+path('comments/unapprove/<int:comment_id>/', views.comment_unapprove, name='comment_unapprove'),
+path('comments/delete/<int:comment_id>/', views.comment_delete, name='comment_delete'),
+path('comments/edit/<int:comment_id>/', views.comment_edit, name='comment_edit'),
+path('comments/reply/<int:comment_id>/', views.comment_reply, name='comment_reply'),
+# comments
+
 # Pages Management
 path('pages/', views.pages, name='pages'),
 path('pages/bulk-action/', views.bulk_action_pages, name='bulk_action_pages'),

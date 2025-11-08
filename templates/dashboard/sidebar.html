@@ -54,7 +54,7 @@
         </div>
 
         <!-- Comments -->
-        <a href="#" class="flex items-center justify-between px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white transition-colors cursor-pointer {% if '/dashboard/comments/' == request.path %}bg-accent{% endif %}">
+        <a href="{% url 'comments' %}" class="flex items-center justify-between px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white transition-colors cursor-pointer {% if '/dashboard/comments/' == request.path %}bg-accent{% endif %}">
             <div class="flex items-center">
                 <i class="fa-solid fa-comment mr-3 w-5"></i>
                 <span class="menu-text">Comments</span>

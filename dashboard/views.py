@@ -12,8 +12,9 @@ import json
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.text import slugify
 
-from dashboard.forms import PageForm, PostForm
+from dashboard.forms import PageForm, PostForm, ProjectForm
 from media_manager.models import MediaFile
+from portfolio.models import Project
 
 def build_filtered_url(base_url, **params):
     query_dict = QueryDict(mutable=True)
@@ -30,12 +31,14 @@ def dashboard(request):
     pages_count = Page.objects.filter(is_trashed=False).count()
     comments_count = Comment.objects.filter(approved=True).count()
     pending_comments_count = Comment.objects.filter(approved=False).count()
+    projects_count = Project.objects.count()
     
     context = {
         'posts_count': posts_count,
         'pages_count': pages_count,
         'comments_count': comments_count,
         'pending_comments_count': pending_comments_count,
+        'projects_count': projects_count,
     }
     
     return render(request, 'dashboard/dashboard.html', context)
@@ -1479,3 +1482,45 @@ def bulk_delete_media(request):
     return JsonResponse({'error': 'Invalid request'}, status=400)
 
 
+# Projects
+def projects(request):
+    project_list = Project.objects.all().order_by('-created_at')
+    
+    context = {
+        'projects': project_list,
+        'total_projects': project_list.count(),
+    }
+    return render(request, 'dashboard/projects.html', context)
+
+
+def add_project(request):
+    if request.method == 'POST':
+        form = ProjectForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Project added successfully!')
+            return redirect('projects')
+        else:
+            messages.error(request, 'Error adding project. Please check the form.')
+    return redirect('projects')
+
+
+def edit_project(request, pk):
+    project = get_object_or_404(Project, pk=pk)
+    if request.method == 'POST':
+        form = ProjectForm(request.POST, request.FILES, instance=project)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Project updated successfully!')
+            return redirect('projects')
+        else:
+            messages.error(request, 'Error updating project. Please check the form.')
+    return redirect('projects')
+
+
+def delete_project(request, pk):
+    project = get_object_or_404(Project, pk=pk)
+    if request.method == 'POST':
+        project.delete()
+        messages.success(request, 'Project deleted successfully!')
+    return redirect('projects')

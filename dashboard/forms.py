@@ -4,6 +4,8 @@ from django.utils.text import slugify
 from django.utils import timezone
 from tinymce.widgets import TinyMCE
 
+from portfolio.models import Project
+
 class BaseContentForm(forms.ModelForm):
     """Base form for Post and Page with shared fields and logic"""
     
@@ -164,3 +166,27 @@ class PageForm(BaseContentForm):
         super().__init__(*args, **kwargs)
         # Override content widget with TinyMCE
         self.fields['content'].widget = self.get_tinymce_widget()
+
+class ProjectForm(forms.ModelForm):
+    class Meta:
+        model = Project
+        fields = [
+            'title', 'description', 'client', 'category', 
+            'completion_date', 'image', 'url', 'is_featured', 
+            'top_rated', 'case_study_description', 'sales_increase', 
+            'daily_users', 'uptime', 'user_rating'
+        ]
+        widgets = {
+            'title': forms.TextInput(attrs={'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary'}),
+            'description': forms.Textarea(attrs={'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary', 'rows': 4}),
+            'client': forms.TextInput(attrs={'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary'}),
+            'category': forms.TextInput(attrs={'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary'}),
+            'completion_date': forms.DateInput(attrs={'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary', 'type': 'date'}),
+            'image': forms.FileInput(attrs={'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary'}),
+            'url': forms.URLInput(attrs={'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary'}),
+            'case_study_description': forms.Textarea(attrs={'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary', 'rows': 3}),
+            'sales_increase': forms.TextInput(attrs={'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary'}),
+            'daily_users': forms.TextInput(attrs={'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary'}),
+            'uptime': forms.TextInput(attrs={'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary'}),
+            'user_rating': forms.TextInput(attrs={'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary'}),
+        }

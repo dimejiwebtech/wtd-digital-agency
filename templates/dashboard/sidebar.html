@@ -93,7 +93,7 @@
         </div>
         
         <!-- Projects -->
-        <a href="#" class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white transition-colors">
+        <a href="{% url 'projects' %}" class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white transition-colors {% if '/projects/' in request.path %} bg-accent{% endif %}">
             <i class="fas fa-project-diagram mr-3 w-5"></i>
             <span class="menu-text">Projects</span>
         </a>

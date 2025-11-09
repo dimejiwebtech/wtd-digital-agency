@@ -55,5 +55,11 @@ path('media/<int:media_id>/update/', views.update_media, name='update_media'),
 path('media/<int:media_id>/delete/', views.delete_media, name='delete_media'),
 path('media/bulk-delete/', views.bulk_delete_media, name='bulk_delete_media'),
 # Media management URLs
+
+# Projects
+path('projects/', views.projects, name='projects'),
+path('projects/add/', views.add_project, name='add_project'),
+path('projects/edit/<int:pk>/', views.edit_project, name='edit_project'),
+path('projects/delete/<int:pk>/', views.delete_project, name='delete_project'),
   
 ]

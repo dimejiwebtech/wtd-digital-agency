@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="shortcut icon" href="{% static 'images/favicon.png' %}" type="image/x-icon" />
     <link rel="stylesheet" href="{% static 'css/output.css' %}" />
-    <title>{% block title %}Dashboard - WTD Digital{% endblock %}</title>
+    <title>{% block title %}Dashboard - WTD-Digital{% endblock %}</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -23,9 +23,9 @@
                 <button id="mobile-menu-toggle" class="lg:hidden text-white hover:text-primary transition">
                     <i class="fas fa-bars text-xl"></i>
                 </button>
-                <a href="#" class="flex items-center gap-3">
+                <a href="{% url 'homepage' %}" class="flex items-center gap-3">
                     <img src="{% static 'images/logo.png' %}" alt="WTD Digital" class="h-10">
-                    <span class="hidden md:block text-xl font-bold">WTD Digital</span>
+                    <span class="hidden md:block text-xl font-bold">WTD-Digital</span>
                 </a>
             </div>
 

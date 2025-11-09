@@ -68,5 +68,12 @@ path('testimonials/add/', views.add_testimonial, name='add_testimonial'),
 path('testimonials/edit/<int:pk>/', views.edit_testimonial, name='edit_testimonial'),
 path('testimonials/delete/<int:pk>/', views.delete_testimonial, name='delete_testimonial'),
 # Testimonials
+
+# Team
+path('team/', views.team, name='team'),
+path('team/add-member/', views.add_member, name='add_member'),
+path('team/edit-member/<int:pk>/', views.edit_member, name='edit_member'),
+path('team/delete-member/<int:pk>/', views.delete_member, name='delete_member'),
+# Team
   
 ]

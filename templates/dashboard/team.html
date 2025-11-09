@@ -1,0 +1,196 @@
+{% extends 'dashboard_base.html' %}
+{% load static %}
+
+{% block title %}Team Members - WTD-Digital{% endblock %}
+
+{% block content %}
+<section id="main-content" class="min-h-screen bg-gray-50">
+    <!-- Header with Toggle -->
+    <div class="bg-white shadow-sm border-b border-gray-200 px-4 md:px-6 py-3 sticky top-0 z-10">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-4">
+                <h1 class="text-xl md:text-2xl font-bold text-gray-900">Team Members</h1>
+                <button id="add-member-btn" class="px-4 py-2 bg-primary text-white text-sm font-semibold rounded-lg hover:bg-primary/90 transition-colors">
+                    <i class="fas fa-plus mr-2"></i>Add Member
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="px-4 md:px-6 py-6">
+        <!-- Messages (Team only) -->
+        {% for message in messages %}
+            {% if 'team' in message.tags %}
+            <div class="mb-6 p-4 bg-green-50 border border-green-200 text-green-800 rounded-lg flex items-center justify-between">
+                <span>{{ message }}</span>
+                <button onclick="this.parentElement.remove()" class="text-green-600 hover:text-green-800">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            {% endif %}
+        {% endfor %}
+
+        <!-- Team Members Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {% for member in members %}
+            <div class="bg-white rounded-lg border border-gray-200 overflow-hidden">
+                <!-- Member Image -->
+                <div class="h-64 bg-gray-200 overflow-hidden">
+                    {% if member.image %}
+                    <img src="{{ member.image.url }}" alt="{{ member.name }}" class="w-full h-full object-cover">
+                    {% else %}
+                    <div class="w-full h-full flex items-center justify-center bg-primary/10">
+                        <i class="fas fa-user text-6xl text-primary/30"></i>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Member Info -->
+                <div class="p-5">
+                    <div class="flex items-start justify-between mb-3">
+                        <div class="flex-1">
+                            <h3 class="text-lg font-bold text-gray-900">{{ member.name }}</h3>
+                            <p class="text-sm text-primary font-medium">{{ member.position }}</p>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            {% if member.is_active %}
+                            <span class="px-2 py-1 text-xs bg-green-100 text-green-700 rounded-full font-medium">Active</span>
+                            {% else %}
+                            <span class="px-2 py-1 text-xs bg-gray-100 text-gray-600 rounded-full font-medium">Inactive</span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <p class="text-sm text-gray-700 mb-4 line-clamp-3">{{ member.bio }}</p>
+
+                    <div class="flex items-center justify-between pt-4 border-t border-gray-200">
+                        <span class="text-xs text-gray-500">Order: {{ member.order }}</span>
+                        <div class="flex items-center gap-2">
+                            <button onclick="openEditModal({{ member.id }}, '{{ member.name|escapejs }}', '{{ member.position|escapejs }}', '{{ member.bio|escapejs }}', {{ member.order }}, {{ member.is_active|lower }})" class="px-3 py-1.5 text-xs bg-primary text-white font-semibold rounded hover:bg-primary/90 transition">
+                                <i class="fas fa-edit mr-1"></i>Edit
+                            </button>
+                            <button onclick="openDeleteModal({{ member.id }}, '{{ member.name|escapejs }}')" class="px-3 py-1.5 text-xs bg-red-600 text-white font-semibold rounded hover:bg-red-700 transition">
+                                <i class="fas fa-trash mr-1"></i>Delete
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-span-full bg-white rounded-lg border border-gray-200 p-12 text-center">
+                <i class="fas fa-users text-4xl text-gray-300 mb-3"></i>
+                <p class="text-gray-500 mb-4">No team members yet.</p>
+                <button id="add-first-member-btn" class="px-4 py-2 bg-primary text-white text-sm font-semibold rounded-lg hover:bg-primary/90 transition">
+                    <i class="fas fa-plus mr-2"></i>Add Your First Member
+                </button>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Add Member Modal -->
+<div id="add-modal" class="fixed inset-0 bg-black/50 hidden z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+        <div class="px-6 py-4 border-b border-gray-200 sticky top-0 bg-white">
+            <h3 class="text-lg font-bold text-gray-900">Add Team Member</h3>
+        </div>
+        <form method="post" action="{% url 'add_member' %}" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="px-6 py-4 space-y-4">
+                <div>
+                    <label for="add-name" class="block text-sm font-semibold text-gray-700 mb-2">Name *</label>
+                    <input type="text" id="add-name" name="name" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
+                </div>
+                <div>
+                    <label for="add-position" class="block text-sm font-semibold text-gray-700 mb-2">Position *</label>
+                    <input type="text" id="add-position" name="position" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
+                </div>
+                <div>
+                    <label for="add-bio" class="block text-sm font-semibold text-gray-700 mb-2">Bio *</label>
+                    <textarea id="add-bio" name="bio" rows="4" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"></textarea>
+                </div>
+                <div>
+                    <label for="add-image" class="block text-sm font-semibold text-gray-700 mb-2">Image *</label>
+                    <input type="file" id="add-image" name="image" accept="image/*" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
+                </div>
+                <div>
+                    <label for="add-order" class="block text-sm font-semibold text-gray-700 mb-2">Display Order</label>
+                    <input type="number" id="add-order" name="order" value="0" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
+                </div>
+                <div class="flex items-center">
+                    <input type="checkbox" id="add-is-active" name="is_active" checked class="rounded border-gray-300 text-primary focus:ring-primary mr-2">
+                    <label for="add-is-active" class="text-sm font-semibold text-gray-700">Active</label>
+                </div>
+            </div>
+            <div class="px-6 py-4 border-t border-gray-200 flex justify-end gap-3 sticky bottom-0 bg-white">
+                <button type="button" id="cancel-add" class="px-4 py-2 bg-gray-200 text-gray-700 font-semibold rounded-lg hover:bg-gray-300 transition">Cancel</button>
+                <button type="submit" class="px-4 py-2 bg-primary text-white font-semibold rounded-lg hover:bg-primary/90 transition">Add Member</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Edit Member Modal -->
+<div id="edit-modal" class="fixed inset-0 bg-black/50 hidden z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+        <div class="px-6 py-4 border-b border-gray-200 sticky top-0 bg-white">
+            <h3 class="text-lg font-bold text-gray-900">Edit Team Member</h3>
+        </div>
+        <form method="post" id="edit-form" enctype="multipart/form-data" data-edit-url="{% url 'edit_member' 0 %}">
+            {% csrf_token %}
+            <div class="px-6 py-4 space-y-4">
+                <div>
+                    <label for="edit-name" class="block text-sm font-semibold text-gray-700 mb-2">Name *</label>
+                    <input type="text" id="edit-name" name="name" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
+                </div>
+                <div>
+                    <label for="edit-position" class="block text-sm font-semibold text-gray-700 mb-2">Position *</label>
+                    <input type="text" id="edit-position" name="position" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
+                </div>
+                <div>
+                    <label for="edit-bio" class="block text-sm font-semibold text-gray-700 mb-2">Bio *</label>
+                    <textarea id="edit-bio" name="bio" rows="4" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"></textarea>
+                </div>
+                <div>
+                    <label for="edit-image" class="block text-sm font-semibold text-gray-700 mb-2">Image (leave empty to keep current)</label>
+                    <input type="file" id="edit-image" name="image" accept="image/*" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
+                </div>
+                <div>
+                    <label for="edit-order" class="block text-sm font-semibold text-gray-700 mb-2">Display Order</label>
+                    <input type="number" id="edit-order" name="order" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
+                </div>
+                <div class="flex items-center">
+                    <input type="checkbox" id="edit-is-active" name="is_active" class="rounded border-gray-300 text-primary focus:ring-primary mr-2">
+                    <label for="edit-is-active" class="text-sm font-semibold text-gray-700">Active</label>
+                </div>
+            </div>
+            <div class="px-6 py-4 border-t border-gray-200 flex justify-end gap-3 sticky bottom-0 bg-white">
+                <button type="button" id="cancel-edit" class="px-4 py-2 bg-gray-200 text-gray-700 font-semibold rounded-lg hover:bg-gray-300 transition">Cancel</button>
+                <button type="submit" class="px-4 py-2 bg-primary text-white font-semibold rounded-lg hover:bg-primary/90 transition">Update Member</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div id="delete-modal" class="fixed inset-0 bg-black/50 hidden z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-lg shadow-xl w-full max-w-md">
+        <div class="px-6 py-4 border-b border-gray-200">
+            <h3 class="text-lg font-bold text-gray-900">Delete Team Member</h3>
+        </div>
+        <form method="post" id="delete-form" enctype="multipart/form-data" data-delete-url="{% url 'delete_member' 0 %}">
+            {% csrf_token %}
+            <div class="px-6 py-4">
+                <p class="text-gray-700">Are you sure you want to delete <strong id="delete-member-name"></strong>? This action cannot be undone.</p>
+            </div>
+            <div class="px-6 py-4 border-t border-gray-200 flex justify-end gap-3">
+                <button type="button" id="cancel-delete" class="px-4 py-2 bg-gray-200 text-gray-700 font-semibold rounded-lg hover:bg-gray-300 transition">Cancel</button>
+                <button type="submit" class="px-4 py-2 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition">Delete</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="{% static 'js/dashboard/team.js' %}"></script>
+{% endblock %}

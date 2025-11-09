@@ -14,7 +14,7 @@ from django.utils.text import slugify
 
 from dashboard.forms import PageForm, PostForm, ProjectForm
 from media_manager.models import MediaFile
-from portfolio.models import Project, Testimonial
+from portfolio.models import Project, Team, Testimonial
 
 def build_filtered_url(base_url, **params):
     query_dict = QueryDict(mutable=True)
@@ -1582,3 +1582,66 @@ def delete_testimonial(request, pk):
         messages.success(request, 'Testimonial deleted successfully!', extra_tags='testimonial')
     
     return redirect('testimonials')
+
+
+# Team
+def team(request):
+    members = Team.objects.all().order_by('order')
+    context = {
+        'members': members,
+    }
+    return render(request, 'dashboard/team.html', context)
+
+
+def add_member(request):
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        position = request.POST.get('position')
+        bio = request.POST.get('bio')
+        image = request.FILES.get('image')
+        order = request.POST.get('order', 0)
+        is_active = request.POST.get('is_active') == 'on'
+        
+        Team.objects.create(
+            name=name,
+            position=position,
+            bio=bio,
+            image=image,
+            order=order,
+            is_active=is_active
+        )
+        messages.success(request, 'Team member added successfully!', extra_tags='team')
+        return redirect('team')
+    
+    return redirect('team')
+
+
+def edit_member(request, pk):
+    member = get_object_or_404(Team, pk=pk)
+    
+    if request.method == 'POST':
+        member.name = request.POST.get('name')
+        member.position = request.POST.get('position')
+        member.bio = request.POST.get('bio')
+        member.order = request.POST.get('order', 0)
+        member.is_active = request.POST.get('is_active') == 'on'
+        
+        if request.FILES.get('image'):
+            member.image = request.FILES.get('image')
+        
+        member.save()
+        messages.success(request, 'Team member updated successfully!', extra_tags='team')
+        return redirect('team')
+    
+    return redirect('team')
+
+
+def delete_member(request, pk):
+    member = get_object_or_404(Team, pk=pk)
+    
+    if request.method == 'POST':
+        member.delete()
+        messages.success(request, 'Team member deleted successfully!', extra_tags='team')
+        return redirect('team')
+    
+    return redirect('team')

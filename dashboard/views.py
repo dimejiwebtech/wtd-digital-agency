@@ -14,7 +14,7 @@ from django.utils.text import slugify
 
 from dashboard.forms import PageForm, PostForm, ProjectForm
 from media_manager.models import MediaFile
-from portfolio.models import Project
+from portfolio.models import Project, Testimonial
 
 def build_filtered_url(base_url, **params):
     query_dict = QueryDict(mutable=True)
@@ -27,8 +27,8 @@ def build_filtered_url(base_url, **params):
     return base_url
 
 def dashboard(request):
-    posts_count = Post.objects.filter(is_trashed=False).count()
-    pages_count = Page.objects.filter(is_trashed=False).count()
+    posts_count = Post.objects.filter(status='published').count()
+    pages_count = Page.objects.filter(status='published').count()
     comments_count = Comment.objects.filter(approved=True).count()
     pending_comments_count = Comment.objects.filter(approved=False).count()
     projects_count = Project.objects.count()
@@ -1524,3 +1524,61 @@ def delete_project(request, pk):
         project.delete()
         messages.success(request, 'Project deleted successfully!')
     return redirect('projects')
+
+# Testimonials
+def testimonials(request):
+    testimonials_list = Testimonial.objects.all().order_by('-created_at')
+    context = {
+        'testimonials': testimonials_list
+    }
+    return render(request, 'dashboard/testimonials.html', context)
+
+def add_testimonial(request):
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        position = request.POST.get('position')
+        company = request.POST.get('company')
+        message = request.POST.get('message')
+        image = request.FILES.get('image')
+        is_active = request.POST.get('is_active') == 'on'
+        
+        Testimonial.objects.create(
+            name=name,
+            position=position,
+            company=company,
+            message=message,
+            image=image,
+            is_active=is_active
+        )
+        messages.success(request, 'Testimonial added successfully!', extra_tags='testimonial')
+        return redirect('testimonials')
+    
+    return redirect('testimonials')
+
+def edit_testimonial(request, pk):
+    testimonial = get_object_or_404(Testimonial, pk=pk)
+    
+    if request.method == 'POST':
+        testimonial.name = request.POST.get('name')
+        testimonial.position = request.POST.get('position')
+        testimonial.company = request.POST.get('company')
+        testimonial.message = request.POST.get('message')
+        testimonial.is_active = request.POST.get('is_active') == 'on'
+        
+        if request.FILES.get('image'):
+            testimonial.image = request.FILES.get('image')
+        
+        testimonial.save()
+        messages.success(request, 'Testimonial updated successfully!', extra_tags='testimonial')
+        return redirect('testimonials')
+    
+    return redirect('testimonials')
+
+def delete_testimonial(request, pk):
+    testimonial = get_object_or_404(Testimonial, pk=pk)
+    
+    if request.method == 'POST':
+        testimonial.delete()
+        messages.success(request, 'Testimonial deleted successfully!', extra_tags='testimonial')
+    
+    return redirect('testimonials')

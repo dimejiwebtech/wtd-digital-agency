@@ -17,6 +17,14 @@ path('generate-slug/', views.generate_slug_ajax, name='generate_slug'),
 path('remove-featured-image/', views.remove_featured_image, name='remove_featured_image'),
 # Post Management
 
+# categories, add, edit, view & delete
+path('posts/categories/', views.categories, name='categories'),
+path('posts/categories/add/', views.add_category, name='add_category'),
+path('posts/categories/edit/<int:category_id>/', views.edit_category, name='edit_category'),
+path('posts/categories/delete/<int:pk>/', views.delete_category, name='delete_category'),
+path('categories/<slug:slug>/', views.view_category, name='view_category'),
+# categories, add, edit, view & delete
+
 # comments
 path('comments/', views.comment, name='comments'),
 path('comments/bulk-action/', views.bulk_comment_action, name='bulk_comment_action'),

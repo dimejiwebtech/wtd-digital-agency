@@ -3,7 +3,7 @@ from django.utils import timezone
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.core.paginator import Paginator
-from django.db.models import Q, Count
+from django.db.models import Q, F, Count
 from django.http import JsonResponse, QueryDict
 from blog.models import Category, Page, Post, Comment
 from django.contrib import messages
@@ -26,7 +26,19 @@ def build_filtered_url(base_url, **params):
     return base_url
 
 def dashboard(request):
-    return render(request, 'dashboard/dashboard.html')
+    posts_count = Post.objects.filter(is_trashed=False).count()
+    pages_count = Page.objects.filter(is_trashed=False).count()
+    comments_count = Comment.objects.filter(approved=True).count()
+    pending_comments_count = Comment.objects.filter(approved=False).count()
+    
+    context = {
+        'posts_count': posts_count,
+        'pages_count': pages_count,
+        'comments_count': comments_count,
+        'pending_comments_count': pending_comments_count,
+    }
+    
+    return render(request, 'dashboard/dashboard.html', context)
 
 
 def posts(request):
@@ -78,7 +90,6 @@ def posts(request):
         except (ValueError, IndexError):
             pass
     
-    # Order by creation date (newest first)
     posts_queryset = posts_queryset.order_by('-created_at')
     
     # Get counts for tabs
@@ -436,10 +447,6 @@ def post_form_view(request, pk=None):
         'all_categories': Category.objects.all(),
     })
 
-# URL patterns will use:
-# add_post = post_form_view
-# edit_post = post_form_view (with pk parameter)
-
 def generate_unique_slug(title, exclude_id=None):
     """Generate a unique slug from title"""
     base_slug = slugify(title) or 'post'
@@ -631,6 +638,141 @@ def preview_post(request, pk):
     
     # Fallback for other statuses
     return redirect('dashboard')
+
+
+def categories(request):
+    search_query = request.GET.get('search', '')
+    categories_list = Category.objects.annotate(
+        posts_count=Count('posts', filter=Q(posts__status='published'))
+    ).order_by('name')
+    
+    if search_query:
+        categories_list = categories_list.filter(
+            Q(name__icontains=search_query) |
+            Q(description__icontains=search_query) |
+            Q(slug__icontains=search_query)
+        )
+    
+    # Pagination
+    paginator = Paginator(categories_list, 20) 
+    page_number = request.GET.get('page')
+    categories = paginator.get_page(page_number)
+    
+    context = {
+        'categories': categories,
+        'search_query': search_query,
+    }
+    return render(request, 'dashboard/categories.html', context)
+
+
+def add_category(request):
+    if request.method == 'POST':
+        category_name = request.POST.get('name', '').strip()
+        slug = request.POST.get('slug', '').strip()
+        description = request.POST.get('description', '').strip()
+        
+        if not category_name:
+            messages.error(request, 'Category name is required', extra_tags='category')
+            return redirect('categories')
+        
+        if not slug:
+            slug = slugify(category_name)
+        else:
+            slug = slugify(slug)
+        
+        if Category.objects.filter(name__iexact=category_name).exists():
+            messages.error(request, 'Category with this name already exists', extra_tags='category')
+            return redirect('categories')
+        
+        if Category.objects.filter(slug=slug).exists():
+            messages.error(request, 'Category with this slug already exists', extra_tags='category')
+            return redirect('categories')
+        
+        try:
+            Category.objects.create(
+                name=category_name,
+                slug=slug,
+                description=description if description else ''
+            )
+            messages.success(request, f'Category "{category_name}" added successfully', extra_tags='category')
+        except Exception as e:
+            messages.error(request, f'Error adding category: {str(e)}', extra_tags='category')
+    
+    return redirect('categories')
+
+def edit_category(request, category_id):
+    """Edit existing category"""
+    category = get_object_or_404(Category, id=category_id)
+    
+    if request.method == 'POST':
+        category_name = request.POST.get('name', '').strip()
+        slug = request.POST.get('slug', '').strip()
+        description = request.POST.get('description', '').strip()
+        
+        if not category_name:
+            messages.error(request, 'Category name is required', extra_tags='category')
+            return redirect('categories')
+        
+        if not slug:
+            slug = slugify(category_name)
+        else:
+            slug = slugify(slug)
+        
+        # Check for duplicates 
+        if Category.objects.filter(name__iexact=category_name).exclude(id=category_id).exists():
+            messages.error(request, 'Category with this name already exists', extra_tags='category')
+            return redirect('categories')
+        
+        if Category.objects.filter(slug=slug).exclude(id=category_id).exists():
+            messages.error(request, 'Category with this slug already exists', extra_tags='category')
+            return redirect('categories')
+        
+        try:
+            category.name = category_name
+            category.slug = slug
+            category.description = description if description else ''
+            category.save()
+            messages.success(request, f'Category "{category_name}" updated successfully', extra_tags='category')
+        except Exception as e:
+            messages.error(request, f'Error updating category: {str(e)}', extra_tags='category')
+    
+    return redirect('categories')
+
+def delete_category(request, pk):
+    if request.method == 'POST':
+        category = get_object_or_404(Category, pk=pk)
+        category_name = category.name
+        
+        # Check if category has posts
+        post_count = category.posts.count()
+        if post_count > 0:
+            messages.error(request, f'Cannot delete category "{category_name}" because it has {post_count} post(s) assigned to it', extra_tags='category')
+            return redirect('categories')
+        
+        try:
+            category.delete()
+            messages.success(request, f'Category "{category_name}" deleted successfully', extra_tags='category')
+        except Exception as e:
+            messages.error(request, f'Error deleting category: {str(e)}', extra_tags='category')
+    
+    return redirect('categories')
+
+
+def view_category(request, slug):
+    """Public view for category posts"""
+    category = get_object_or_404(Category, slug=slug)
+    
+    posts = Post.objects.filter(status='published', category=category).order_by('-published_date')
+    paginator = Paginator(posts, 6)
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+    
+    context = {
+        'category': category,
+        'page_obj': page_obj,
+        'categories': Category.objects.all(),
+    }
+    return render(request, 'blog/posts_by_category.html', context)
 
 
 #comments

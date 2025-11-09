@@ -20,16 +20,13 @@
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm font-semibold text-gray-600 uppercase">Total Posts</p>
-                    <p class="text-3xl font-bold text-gray-900 mt-2">248</p>
+                    <p class="text-3xl font-bold text-gray-900 mt-2">{{posts_count}}</p>
                 </div>
                 <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
                     <i class="fas fa-edit text-blue-500 text-xl"></i>
                 </div>
             </div>
-            <div class="mt-4 flex items-center text-sm">
-                <span class="text-green-600 font-semibold">+12%</span>
-                <span class="text-gray-600 ml-2">from last month</span>
-            </div>
+
         </div>
 
         <!-- Total Pages -->
@@ -37,16 +34,13 @@
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm font-semibold text-gray-600 uppercase">Total Pages</p>
-                    <p class="text-3xl font-bold text-gray-900 mt-2">18</p>
+                    <p class="text-3xl font-bold text-gray-900 mt-2">{{pages_count}}</p>
                 </div>
                 <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
                     <i class="fas fa-file-alt text-purple-500 text-xl"></i>
                 </div>
             </div>
-            <div class="mt-4 flex items-center text-sm">
-                <span class="text-green-600 font-semibold">+2</span>
-                <span class="text-gray-600 ml-2">new this month</span>
-            </div>
+  
         </div>
 
         <!-- Total Comments -->
@@ -54,24 +48,21 @@
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm font-semibold text-gray-600 uppercase">Total Comments</p>
-                    <p class="text-3xl font-bold text-gray-900 mt-2">1,429</p>
+                    <p class="text-3xl font-bold text-gray-900 mt-2">{{comments_count}}</p>
                 </div>
                 <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
                     <i class="fas fa-comment text-green-500 text-xl"></i>
                 </div>
             </div>
-            <div class="mt-4 flex items-center text-sm">
-                <span class="text-green-600 font-semibold">+8%</span>
-                <span class="text-gray-600 ml-2">from last month</span>
-            </div>
         </div>
+        
 
         <!-- Pending Comments -->
         <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-red-500 hover:shadow-lg transition">
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm font-semibold text-gray-600 uppercase">Pending Comments</p>
-                    <p class="text-3xl font-bold text-gray-900 mt-2">5</p>
+                    <p class="text-3xl font-bold text-gray-900 mt-2">{{ pending_comments_count }}</p>
                 </div>
                 <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
                     <i class="fas fa-clock text-red-500 text-xl"></i>

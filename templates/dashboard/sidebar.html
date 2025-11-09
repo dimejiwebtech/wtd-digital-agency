@@ -42,14 +42,14 @@
             <div id="posts-submenu" class="submenu bg-gray-700 lg:hidden hidden">
                 <a href="{% url 'posts' %}" class="block px-8 py-2 text-sm text-gray-300 hover:bg-gray-600 hover:text-white">All Posts</a>
                 <a href="{% url 'add_post' %}" class="block px-8 py-2 text-sm text-gray-300 hover:bg-gray-600 hover:text-white">Add Post</a>
-                <a href="#" class="block px-8 py-2 text-sm text-gray-300 hover:bg-gray-600 hover:text-white">Categories</a>
+                <a href="{% url 'categories' %}" class="block px-8 py-2 text-sm text-gray-300 hover:bg-gray-600 hover:text-white">Categories</a>
             </div>
             
             <!-- Desktop hover submenu -->
             <div class="submenu-right hidden lg:block absolute left-full top-0 ml-0 w-48 bg-gray-700 rounded-r-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
                 <a href="{% url 'posts' %}" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-600 hover:text-white first:rounded-tr-lg">All Posts</a>
                 <a href="{% url 'add_post' %}" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-600 hover:text-white">Add Post</a>
-                <a href="#" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-600 hover:text-white last:rounded-br-lg">Categories</a>
+                <a href="{% url 'categories' %}" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-600 hover:text-white last:rounded-br-lg">Categories</a>
             </div>
         </div>
 

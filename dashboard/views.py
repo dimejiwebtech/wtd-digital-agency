@@ -8,6 +8,7 @@ from django.http import JsonResponse, QueryDict
 from blog.models import Category, Page, Post, Comment, UserProfile
 from django.contrib import messages
 from django.views.decorators.http import require_http_methods
+from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 import json
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.text import slugify
@@ -16,6 +17,8 @@ from media_manager.models import MediaFile
 from portfolio.models import Project, Team, Testimonial
 from django.db import transaction
 from django.contrib.auth.models import User, Group
+from django.contrib.auth.decorators import login_required, user_passes_test
+from .decorators import administrator_required, author_or_admin_required
 
 def build_filtered_url(base_url, **params):
     query_dict = QueryDict(mutable=True)
@@ -26,7 +29,7 @@ def build_filtered_url(base_url, **params):
     if query_dict:
         return f"{base_url}?{query_dict.urlencode()}"
     return base_url
-
+@login_required(login_url='login')
 def dashboard(request):
     posts_count = Post.objects.filter(status='published').count()
     pages_count = Page.objects.filter(status='published').count()
@@ -44,7 +47,7 @@ def dashboard(request):
     
     return render(request, 'dashboard/dashboard.html', context)
 
-
+@login_required(login_url='login')
 def posts(request):
     status_filter = request.GET.get('status', 'all')
     category_filter = request.GET.get('category', 'all')
@@ -155,7 +158,8 @@ def posts(request):
     
     return render(request, 'dashboard/posts/posts.html', context)
 
-
+@administrator_required
+@login_required(login_url='login')
 def bulk_action(request):
     """Handle bulk actions for posts"""
     if request.method == 'POST':
@@ -213,7 +217,8 @@ def bulk_action(request):
     
     return redirect('posts')
 
-
+@administrator_required
+@login_required(login_url='login')
 def trash_post(request, post_id):
     """Move single post to trash"""
     post = get_object_or_404(Post, id=post_id)
@@ -238,7 +243,8 @@ def trash_post(request, post_id):
     redirect_url = reverse('posts') + f'?status={status}&category={category}&date={date}&search={search}&page={page}'
     return redirect(redirect_url)
     
-
+@administrator_required
+@login_required(login_url='login')
 def restore_post(request, post_id):
     """Restore single post from trash"""
     post = get_object_or_404(Post, id=post_id, is_trashed=True)
@@ -262,6 +268,8 @@ def restore_post(request, post_id):
     redirect_url = build_filtered_url('posts', status=status, category=category, date=date, search=search, page=page)
     return redirect(redirect_url)
 
+
+@login_required(login_url='login')
 def add_post(request):
     if request.method == 'POST':
         form = PostForm(request.POST, request.FILES)
@@ -319,6 +327,8 @@ def add_post(request):
         'all_categories': all_categories,
     })
 
+
+@login_required(login_url='login')
 def edit_post(request, pk):
     post = get_object_or_404(Post, pk=pk)
     
@@ -382,7 +392,7 @@ def edit_post(request, pk):
         'post': post,
         'all_categories': all_categories,
     })
-
+@login_required(login_url='login')
 def post_form_view(request, pk=None):
     """Unified view for both add and edit post functionality"""
     post = get_object_or_404(Post, pk=pk) if pk else None
@@ -469,6 +479,7 @@ def generate_unique_slug(title, exclude_id=None):
         counter += 1
 
 @csrf_exempt
+@login_required(login_url='login')
 def auto_save_post(request):
     """Enhanced auto-save with comprehensive field support"""
     if request.method != 'POST':
@@ -545,6 +556,7 @@ def auto_save_post(request):
         print(f"Auto-save error: {str(e)}")
         return JsonResponse({'success': False, 'error': str(e)})
 
+@login_required(login_url='login')
 def generate_slug_ajax(request):
     """Generate slug from title via AJAX"""
     title = request.GET.get('title', '')
@@ -559,6 +571,7 @@ def generate_slug_ajax(request):
     return JsonResponse({'slug': slug})
 
 @csrf_exempt
+@login_required(login_url='login')
 def remove_featured_image(request):
     """Remove featured image via AJAX"""
     if request.method != 'POST':
@@ -586,7 +599,8 @@ def remove_featured_image(request):
     except Exception as e:
         return JsonResponse({'success': False, 'error': str(e)})
     
-  
+@administrator_required  
+@login_required(login_url='login')  
 def delete_post(request, pk):
     """Delete single post (move to trash)"""
     post = get_object_or_404(Post, pk=pk, author=request.user)
@@ -602,7 +616,8 @@ def delete_post(request, pk):
     
     return redirect('posts')
 
-
+@administrator_required  
+@login_required(login_url='login')
 def restore_post(request, pk):
     """Restore single post from trash"""
     post = get_object_or_404(Post, pk=pk, is_trashed=True)
@@ -616,7 +631,7 @@ def restore_post(request, pk):
         
         messages.success(request, f'Post "{post.title}" restored as draft.')
     return redirect('posts')
-    
+@login_required(login_url='login')   
 def preview_post(request, pk):
     post = get_object_or_404(Post, pk=pk)
     
@@ -643,7 +658,8 @@ def preview_post(request, pk):
     # Fallback for other statuses
     return redirect('dashboard')
 
-
+@administrator_required  
+@login_required(login_url='login')
 def categories(request):
     search_query = request.GET.get('search', '')
     categories_list = Category.objects.annotate(
@@ -668,7 +684,8 @@ def categories(request):
     }
     return render(request, 'dashboard/categories.html', context)
 
-
+@administrator_required  
+@login_required(login_url='login')
 def add_category(request):
     if request.method == 'POST':
         category_name = request.POST.get('name', '').strip()
@@ -704,6 +721,8 @@ def add_category(request):
     
     return redirect('categories')
 
+@administrator_required  
+@login_required(login_url='login')
 def edit_category(request, category_id):
     """Edit existing category"""
     category = get_object_or_404(Category, id=category_id)
@@ -742,6 +761,8 @@ def edit_category(request, category_id):
     
     return redirect('categories')
 
+@administrator_required  
+@login_required(login_url='login')
 def delete_category(request, pk):
     if request.method == 'POST':
         category = get_object_or_404(Category, pk=pk)
@@ -761,7 +782,8 @@ def delete_category(request, pk):
     
     return redirect('categories')
 
-
+@administrator_required  
+@login_required(login_url='login')
 def view_category(request, slug):
     """Public view for category posts"""
     category = get_object_or_404(Category, slug=slug)
@@ -780,6 +802,8 @@ def view_category(request, slug):
 
 
 #comments
+@author_or_admin_required
+@login_required(login_url='login')
 def comment(request):
     # Get filter parameters
     status = request.GET.get('status', 'all')
@@ -819,6 +843,8 @@ def comment(request):
     
     return render(request, 'dashboard/comments.html', context)
 
+@administrator_required
+@login_required(login_url='login')
 def bulk_comment_action(request):
     if request.method == 'POST':
         action = request.POST.get('bulk_action')
@@ -836,26 +862,28 @@ def bulk_comment_action(request):
     
     return redirect('comments')
 
-
+@login_required(login_url='login')
 def comment_approve(request, comment_id):
     comment = get_object_or_404(Comment, id=comment_id)
     comment.approved = True
     comment.save()
     return redirect('comments')
 
-
+@login_required(login_url='login')
 def comment_unapprove(request, comment_id):
     comment = get_object_or_404(Comment, id=comment_id)
     comment.approved = False
     comment.save()
     return redirect('comments')
 
+@administrator_required
+@login_required(login_url='login')
 def comment_delete(request, comment_id):
     comment = get_object_or_404(Comment, id=comment_id)
     comment.delete()
     return redirect('comments')
 
-
+@login_required(login_url='login')
 def comment_edit(request, comment_id):
     comment = get_object_or_404(Comment, id=comment_id)
     if request.method == 'POST':
@@ -865,6 +893,7 @@ def comment_edit(request, comment_id):
             comment.save()
     return redirect('comments')
 
+@login_required(login_url='login')
 def comment_reply(request, comment_id):
     comment = get_object_or_404(Comment, id=comment_id)
     if request.method == 'POST':
@@ -881,6 +910,8 @@ def comment_reply(request, comment_id):
     return redirect('comments')
 
 # Page Management
+@administrator_required
+@login_required(login_url='login')
 def pages(request):
     """Pages view - mirrors posts logic"""
     status_filter = request.GET.get('status', 'all')
@@ -956,7 +987,8 @@ def pages(request):
     return render(request, 'dashboard/pages/pages.html', context)
 
 
-
+@administrator_required
+@login_required(login_url='login')
 def bulk_action_pages(request):
     """Handle bulk actions for pages"""
     if request.method == 'POST':
@@ -1010,6 +1042,8 @@ def bulk_action_pages(request):
     
     return redirect('pages')
 
+@administrator_required
+@login_required(login_url='login')
 def trash_page(request, page_id):
     """Move single page to trash"""
     page = get_object_or_404(Page, id=page_id)
@@ -1031,6 +1065,8 @@ def trash_page(request, page_id):
     redirect_url = build_filtered_url('pages', status=status, date=date, search=search, page=page_num)
     return redirect(redirect_url)
 
+@administrator_required
+@login_required(login_url='login')
 def restore_page(request, page_id):
     """Restore single page from trash"""
     page = get_object_or_404(Page, id=page_id, is_trashed=True)
@@ -1052,6 +1088,8 @@ def restore_page(request, page_id):
     redirect_url = build_filtered_url('pages', status=status, date=date, search=search, page=page_num)
     return redirect(redirect_url)
 
+@administrator_required
+@login_required(login_url='login')
 def add_page(request):
     if request.method == 'POST':
         form = PageForm(request.POST)
@@ -1087,7 +1125,8 @@ def add_page(request):
     
     return render(request, 'dashboard/pages/add_page.html', {'form': form})
 
-
+@administrator_required
+@login_required(login_url='login')
 def edit_page(request, pk):
     page = get_object_or_404(Page, pk=pk)
     
@@ -1125,6 +1164,8 @@ def edit_page(request, pk):
     
     return render(request, 'dashboard/pages/add_page.html', {'form': form, 'page': page})
 
+@administrator_required
+@login_required(login_url='login')
 def delete_page(request, pk):
     page = get_object_or_404(Page, pk=pk)
     
@@ -1137,6 +1178,8 @@ def delete_page(request, pk):
     
     return redirect('pages')
 
+@administrator_required
+@login_required(login_url='login')
 def restore_page(request, pk):
     page = get_object_or_404(Page, pk=pk, is_trashed=True)
     
@@ -1149,7 +1192,8 @@ def restore_page(request, pk):
     
     return redirect('pages')
 
-
+@administrator_required
+@login_required(login_url='login')
 def generate_unique_slug_page(title, exclude_id=None):
     """Generate a unique slug from title for pages"""
     base_slug = slugify(title) or 'page'
@@ -1169,6 +1213,8 @@ def generate_unique_slug_page(title, exclude_id=None):
 
 
 @csrf_exempt
+@administrator_required
+@login_required(login_url='login')
 def auto_save_page(request):
     """Auto-save for pages"""
     if request.method != 'POST':
@@ -1215,7 +1261,8 @@ def auto_save_page(request):
     except Exception as e:
         return JsonResponse({'success': False, 'error': str(e)})
 
-
+@administrator_required
+@login_required(login_url='login')
 def generate_slug_ajax_page(request):
     """Generate slug from title via AJAX for pages"""
     title = request.GET.get('title', '')
@@ -1229,7 +1276,8 @@ def generate_slug_ajax_page(request):
     
     return JsonResponse({'slug': slug})
 
-
+@administrator_required
+@login_required(login_url='login')
 def preview_page(request, pk):
     """Preview page functionality"""
     page = get_object_or_404(Page, pk=pk)
@@ -1249,6 +1297,7 @@ def preview_page(request, pk):
 
 
 # Media Library
+@login_required(login_url='login')
 def media_library(request):
     """Main media library view with filtering and pagination"""
     
@@ -1349,7 +1398,7 @@ def media_library(request):
     
     return render(request, 'dashboard/media_library/media.html', context)
 
-
+@login_required(login_url='login')
 def add_media(request):
     """Add new media files page"""
     if request.method == 'POST':
@@ -1397,7 +1446,7 @@ def add_media(request):
     
     return render(request, 'dashboard/media_library/add_media.html')
 
-
+@login_required(login_url='login')
 def media_detail(request, media_id):
     """Get media file details for modal"""
     media_file = get_object_or_404(MediaFile, id=media_id)
@@ -1422,6 +1471,7 @@ def media_detail(request, media_id):
 
 
 @require_http_methods(["POST"])
+@login_required(login_url='login')
 def update_media(request, media_id):
     """Update media file details"""
     media_file = get_object_or_404(MediaFile, id=media_id)
@@ -1443,6 +1493,7 @@ def update_media(request, media_id):
 
 
 @require_http_methods(["POST"])
+@login_required(login_url='login')
 def delete_media(request, media_id):
     """Delete media file"""
     media_file = get_object_or_404(MediaFile, id=media_id)
@@ -1459,6 +1510,7 @@ def delete_media(request, media_id):
 
 
 @require_http_methods(["POST"])
+@login_required(login_url='login')
 def bulk_delete_media(request):
     """Bulk delete media files"""
     if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
@@ -1484,6 +1536,8 @@ def bulk_delete_media(request):
 
 
 # Projects
+@administrator_required
+@login_required(login_url='login')
 def projects(request):
     project_list = Project.objects.all().order_by('-created_at')
     
@@ -1493,7 +1547,8 @@ def projects(request):
     }
     return render(request, 'dashboard/projects.html', context)
 
-
+@administrator_required
+@login_required(login_url='login')
 def add_project(request):
     if request.method == 'POST':
         form = ProjectForm(request.POST, request.FILES)
@@ -1505,7 +1560,8 @@ def add_project(request):
             messages.error(request, 'Error adding project. Please check the form.')
     return redirect('projects')
 
-
+@administrator_required
+@login_required(login_url='login')
 def edit_project(request, pk):
     project = get_object_or_404(Project, pk=pk)
     if request.method == 'POST':
@@ -1518,7 +1574,8 @@ def edit_project(request, pk):
             messages.error(request, 'Error updating project. Please check the form.')
     return redirect('projects')
 
-
+@administrator_required
+@login_required(login_url='login')
 def delete_project(request, pk):
     project = get_object_or_404(Project, pk=pk)
     if request.method == 'POST':
@@ -1527,6 +1584,8 @@ def delete_project(request, pk):
     return redirect('projects')
 
 # Testimonials
+@administrator_required
+@login_required(login_url='login')
 def testimonials(request):
     testimonials_list = Testimonial.objects.all().order_by('-created_at')
     context = {
@@ -1534,6 +1593,8 @@ def testimonials(request):
     }
     return render(request, 'dashboard/testimonials.html', context)
 
+@administrator_required
+@login_required(login_url='login')
 def add_testimonial(request):
     if request.method == 'POST':
         name = request.POST.get('name')
@@ -1556,6 +1617,8 @@ def add_testimonial(request):
     
     return redirect('testimonials')
 
+@administrator_required
+@login_required(login_url='login')
 def edit_testimonial(request, pk):
     testimonial = get_object_or_404(Testimonial, pk=pk)
     
@@ -1575,6 +1638,8 @@ def edit_testimonial(request, pk):
     
     return redirect('testimonials')
 
+@administrator_required
+@login_required(login_url='login')
 def delete_testimonial(request, pk):
     testimonial = get_object_or_404(Testimonial, pk=pk)
     
@@ -1586,6 +1651,8 @@ def delete_testimonial(request, pk):
 
 
 # Team
+@administrator_required
+@login_required(login_url='login')
 def team(request):
     members = Team.objects.all().order_by('order')
     context = {
@@ -1593,7 +1660,8 @@ def team(request):
     }
     return render(request, 'dashboard/team.html', context)
 
-
+@administrator_required
+@login_required(login_url='login')
 def add_member(request):
     if request.method == 'POST':
         name = request.POST.get('name')
@@ -1616,7 +1684,8 @@ def add_member(request):
     
     return redirect('team')
 
-
+@administrator_required
+@login_required(login_url='login')
 def edit_member(request, pk):
     member = get_object_or_404(Team, pk=pk)
     
@@ -1636,7 +1705,8 @@ def edit_member(request, pk):
     
     return redirect('team')
 
-
+@administrator_required
+@login_required(login_url='login')
 def delete_member(request, pk):
     member = get_object_or_404(Team, pk=pk)
     
@@ -1650,6 +1720,11 @@ def delete_member(request, pk):
 
 # Users
 
+def is_admin(user):
+    return user.groups.filter(name='Administrator').exists()
+
+@login_required(login_url='login')
+@user_passes_test(is_admin)
 def user_list(request):
     search = request.GET.get('search', '')
     role_filter = request.GET.get('role', '')
@@ -1718,7 +1793,9 @@ def user_list(request):
     }
     return render(request, 'dashboard/users.html', context)
 
-
+@administrator_required
+@login_required(login_url='login')
+@user_passes_test(is_admin)
 def add_user(request):
     if request.method == 'POST':
         form = UserCreateForm(request.POST, request.FILES)
@@ -1744,7 +1821,9 @@ def add_user(request):
     
     return render(request, 'dashboard/add_user.html', {'form': form})
 
-
+@administrator_required
+@login_required(login_url='login')
+@user_passes_test(is_admin)
 def delete_user(request, user_id):
     user = get_object_or_404(User, id=user_id)
     
@@ -1758,6 +1837,7 @@ def delete_user(request, user_id):
     
     return JsonResponse({'success': False, 'message': 'Invalid request method'})
 
+@login_required(login_url='login')
 def profile(request, user_id):
     # Check permissions
     if user_id == request.user.id:
@@ -1839,3 +1919,33 @@ def handle_profile_update(request, target_user, profile, is_admin_editing):
             'is_admin_editing': is_admin_editing,
             'can_edit_role': is_admin_editing,
         })
+
+# Login/Logout
+def login(request):
+    if request.user.is_authenticated:
+        return redirect('dashboard')
+    storage = messages.get_messages(request)
+    for _ in storage:
+        pass
+    
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        
+        user = authenticate(request, username=username, password=password)
+        if user:
+            auth_login(request, user)
+            
+            # Handle the 'next' parameter for redirect after login
+            next_url = request.GET.get('next') or request.POST.get('next')
+            if next_url:
+                return redirect(next_url)
+            return redirect('dashboard') 
+        else:
+            messages.error(request, 'Invalid username or password.')
+    
+    return render(request, 'dashboard/login.html')
+
+def logout(request):
+    auth_logout(request)
+    return redirect('login')

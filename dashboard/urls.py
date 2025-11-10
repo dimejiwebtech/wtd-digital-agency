@@ -83,5 +83,9 @@ path('users/delete/<int:user_id>/', views.delete_user, name='delete_user'),
 path('users/profile/', views.profile, name='profile'),
 path('users/profile/<int:user_id>/', views.profile, name='edit_user_profile'),
 # Users
+
+# Login/Logout
+path('login/', views.login, name='login'),
+path('logout/', views.logout, name='logout'),
   
 ]

@@ -1654,11 +1654,9 @@ def user_list(request):
     search = request.GET.get('search', '')
     role_filter = request.GET.get('role', '')
 
-    users = User.objects.select_related('profile').annotate(
-    post_count=Count('posts', distinct=True)
+    users = User.objects.select_related('profile').prefetch_related('groups').annotate(
+        post_count=Count('posts', filter=Q(posts__status='published'), distinct=True)
     ).order_by('-date_joined')
-    
-    users = User.objects.select_related('profile').prefetch_related('groups').order_by('-date_joined')
     
     if search:
         users = users.filter(
@@ -1700,7 +1698,7 @@ def user_list(request):
                         user = User.objects.get(id=user_id)
                         user.groups.clear()
                         user.groups.add(group)
-                        set_user_permissions_by_role(user, role_name)  # NEW: Set admin flags
+                        set_user_permissions_by_role(user, role_name) 
                     messages.success(request, f'Successfully changed role for {len(selected_ids)} users.')
                 except Group.DoesNotExist:
                     messages.error(request, f'Role {role_name} does not exist.')

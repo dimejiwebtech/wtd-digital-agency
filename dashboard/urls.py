@@ -75,5 +75,13 @@ path('team/add-member/', views.add_member, name='add_member'),
 path('team/edit-member/<int:pk>/', views.edit_member, name='edit_member'),
 path('team/delete-member/<int:pk>/', views.delete_member, name='delete_member'),
 # Team
+
+# Users
+path('users/', views.user_list, name='users'),
+path('users/add-user/', views.add_user, name='add_user'),
+path('users/delete/<int:user_id>/', views.delete_user, name='delete_user'),
+path('users/profile/', views.profile, name='profile'),
+path('users/profile/<int:user_id>/', views.profile, name='edit_user_profile'),
+# Users
   
 ]

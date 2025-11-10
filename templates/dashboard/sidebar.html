@@ -141,7 +141,7 @@
         
         <!-- Users (with dropdown) -->
         <div class="dropdown group relative">
-            <a href="#" class="flex items-center justify-between px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white transition-colors cursor-pointer lg:hidden" onclick="toggleSubmenu(event, 'users-submenu')">
+            <a href="#" class="flex items-center justify-between px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white transition-colors cursor-pointer lg:hidden {% if '/users/' in request.path %} bg-accent {% endif %}" onclick="toggleSubmenu(event, 'users-submenu')">
                 <div class="flex items-center">
                     <i class="fas fa-users mr-3 w-5"></i>
                     <span class="menu-text">Users</span>
@@ -150,23 +150,23 @@
             </a>
 
             <!-- Desktop version -->
-            <a href="#" class="hidden lg:flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white transition-colors cursor-pointer">
+            <a href="{% url 'users' %}" class="hidden lg:flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white transition-colors cursor-pointer {% if '/users/' in request.path %} bg-accent {% endif %}">
                 <i class="fas fa-users mr-3 w-5"></i>
                 <span class="menu-text">Users</span>
             </a>
 
             <!-- Mobile/Tablet submenu -->
             <div id="users-submenu" class="submenu bg-gray-700 lg:hidden hidden">
-                <a href="#" class="block px-8 py-2 text-sm text-gray-300 hover:bg-gray-600 hover:text-white">All Users</a>
-                <a href="#" class="block px-8 py-2 text-sm text-gray-300 hover:bg-gray-600 hover:text-white">Add User</a>
-                <a href="#" class="block px-8 py-2 text-sm text-gray-300 hover:bg-gray-600 hover:text-white">Profile</a>
+                <a href="{% url 'users' %}" class="block px-8 py-2 text-sm text-gray-300 hover:bg-gray-600 hover:text-white">All Users</a>
+                <a href="{% url 'add_user' %}" class="block px-8 py-2 text-sm text-gray-300 hover:bg-gray-600 hover:text-white">Add User</a>
+                <a href="{% url 'edit_user_profile' user_id=user.id %}" class="block px-8 py-2 text-sm text-gray-300 hover:bg-gray-600 hover:text-white">Profile</a>
             </div>
             
             <!-- Desktop hover submenu -->
             <div class="submenu-right hidden lg:block absolute left-full top-0 ml-0 w-48 bg-gray-700 rounded-r-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
-                <a href="#" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-600 hover:text-white first:rounded-tr-lg">All Users</a>
-                <a href="#" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-600 hover:text-white">Add User</a>
-                <a href="#" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-600 hover:text-white last:rounded-br-lg">Profile</a>
+                <a href="{% url 'users' %}" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-600 hover:text-white first:rounded-tr-lg">All Users</a>
+                <a href="{% url 'add_user' %}" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-600 hover:text-white">Add User</a>
+                <a href="{% url 'edit_user_profile' user_id=user.id %}" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-600 hover:text-white last:rounded-br-lg">Profile</a>
             </div>
         </div>
         

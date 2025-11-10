@@ -109,6 +109,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'blog.context_processors.get_categories',
+                'dashboard.context_processors.comment_notifications',
             ],
         },
     },
